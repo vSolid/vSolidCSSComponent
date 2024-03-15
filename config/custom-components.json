@@ -1,0 +1,13 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/vsolid/^1.0.0/components/context.jsonld",
+  "@graph": [
+    {
+      "comment": "A custom RepresentationConvertingStore",
+      "@type": "CustomRepresentationConvertingStore",
+      "@id": "urn:my-hello-world:core:CustomRepresentationConvertingStore",
+      "extends": {
+        "@type": "RepresentationConvertingStore"
+      }
+    }
+  ]
+}
