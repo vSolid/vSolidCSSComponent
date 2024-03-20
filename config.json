@@ -1,0 +1,29 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@solid/community-server/^7.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/vsolid/^1.0.0/components/context.jsonld"
+  ],
+  "import": [
+    "hello-world:config/boilerplate.json",
+    "hello-world:config/custom-components.json",
+    "hello-world:config/penny.json"
+  ],
+  "@graph": [
+    {
+      "comment": "Adds the custom components"
+    },
+    {
+      "@id": "urn:solid-server:default:ResourceStore_Converting",
+      "@type": "CustomRepresentationConvertingStore",
+      "source": { "@id": "urn:solid-server:default:ResourceStore_Backend" }
+    },
+    {
+      "comment": "Converts all outgoing resources based on the preferences.",
+      "@id": "urn:solid-server:default:ResourceStore_Converting",
+      "@type": "CustomRepresentationConvertingStore",
+      "metadataStrategy": { "@id": "urn:solid-server:default:MetadataStrategy" },
+      "options_inConverter": { "@id": "urn:solid-server:default:RepresentationConverter" },
+      "options_outConverter": { "@id": "urn:solid-server:default:UiEnabledConverter" }
+    }
+  ]
+}
