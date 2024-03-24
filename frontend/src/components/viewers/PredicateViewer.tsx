@@ -7,13 +7,13 @@ interface Props {
 }
 
 function PredicateViewer({ thing, predicate }: Props) {
-    const urlValues = getUrlAll(thing, predicate).map(url => <li><a href={url}>{url}</a></li>)
+    const urlValues = getUrlAll(thing, predicate).map((url, key) => <li key={key}><a href={url}>{url}</a></li>)
     const stringNoLocaleValues = getStringNoLocaleAll(thing, predicate)
     const integerValues = getIntegerAll(thing, predicate)
     const decimalValues = getDecimalAll(thing, predicate)
     const booleanValues = getBooleanAll(thing, predicate)
     const datetimeValues = getDatetimeAll(thing, predicate).map(date => date.getTime())
-    const stringsByLocale = getStringByLocaleAll(thing, predicate)
+    const stringsByLocale = getStringByLocaleAll(thing, predicate).values()
 
     const importantSeparatorIndex = Math.max(
         predicate.lastIndexOf("/"),

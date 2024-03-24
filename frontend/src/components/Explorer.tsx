@@ -1,5 +1,6 @@
 import { useDataset } from "../hooks/datasets"
 import ContainerViewer from "./viewers/ContainerViewer"
+import FileViewer from "./viewers/FileViewer"
 import ThingsViewer from "./viewers/ThingsViewer"
 
 interface Props {
@@ -15,6 +16,7 @@ function Explorer({ url }: Props) {
         <>
             <h2>Explorer</h2>
             <div>
+                <FileViewer fileURL={url} />
                 <ContainerViewer dataset={dataset} />
                 <ThingsViewer dataset={dataset} />
             </div>

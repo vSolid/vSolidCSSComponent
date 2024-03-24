@@ -7,7 +7,7 @@ interface Props {
 }
 
 function ThingsViewer({ dataset }: Props) {
-    const things = getThingAll(dataset).map(thing => <ThingViewer thing={thing} />)
+    const things = getThingAll(dataset).map(thing => <ThingViewer key={thing.url} thing={thing} />)
 
     return (
         <>

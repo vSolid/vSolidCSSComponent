@@ -6,7 +6,7 @@ interface Props {
 }
 
 function ThingViewer({ thing }: Props) {
-    const predicates = getPropertyAll(thing).map(predicate => <PredicateViewer thing={thing} predicate={predicate} />)
+    const predicates = getPropertyAll(thing).map((predicate, key) => <PredicateViewer key={key} thing={thing} predicate={predicate} />)
 
     return (
         <details>
