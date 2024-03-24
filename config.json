@@ -5,7 +5,6 @@
   ],
   "import": [
     "hello-world:config/boilerplate.json",
-    "hello-world:config/custom-components.json",
     "hello-world:config/penny.json"
   ],
   "@graph": [
