@@ -2,6 +2,7 @@ import { isContainer, isFileData, useResource } from "../hooks/resource"
 import ContainerViewer from "./viewers/ContainerViewer"
 import FileViewer from "./viewers/FileViewer"
 import ThingsViewer from "./viewers/ThingsViewer"
+import TurtleViewer from "./viewers/TurtleViewer"
 
 interface Props {
     url: string
@@ -16,6 +17,7 @@ function Explorer({ url }: Props) {
 
     const containerViewer = isContainer(resource) ? <ContainerViewer dataset={resource} /> : <></>
     const thingsViewer = isContainer(resource) ? <ThingsViewer dataset={resource} /> : <></>
+    const turtleViewer = isContainer(resource) ? <TurtleViewer dataset={resource} /> : <></>
 
     return (
         <>
@@ -24,6 +26,7 @@ function Explorer({ url }: Props) {
                 {fileViewer}
                 {containerViewer}
                 {thingsViewer}
+                {turtleViewer}
             </div>
         </>
     )
