@@ -1,39 +1,31 @@
-import { WithServerResourceInfo, getContentType, isRawData, responseToResourceInfo } from "@inrupt/solid-client";
-import { useEffect, useState } from "react";
+import { getContentType } from "@inrupt/solid-client";
 import FieldSet from "../ui/FieldSet";
-import { fetch } from "@inrupt/solid-client-authn-browser";
-import MarkdownPreview from "../preview/MarkdownPreview";
+import { FileData } from "../../hooks/resource";
+import ImagePreview from "../preview/ImagePreview";
+import TextPreview from "../preview/TextPreview";
+import JsonPreview from "../preview/JsonPreview";
 
 interface Props {
-    fileURL: string
+    file: FileData
 }
 
-function FileViewer({ fileURL }: Props) {
-    const [resourceInfo, setResourceInfo] = useState<WithServerResourceInfo>()
-
-    async function readFileFromPod(fileURL: string) {
-        const response = await fetch(fileURL);
-        setResourceInfo(responseToResourceInfo(response))
-    }
-
-    useEffect(() => {
-        readFileFromPod(fileURL)
-    }, [fileURL])
-
-    if (!resourceInfo) return <></>
-    if (!isRawData(resourceInfo)) return <></>
-    const contentType = getContentType(resourceInfo)
+function FileViewer({ file }: Props) {
+    const contentType = getContentType(file)
 
     let preview = <></>
-    switch(contentType) {
-        case "text/markdown":
-            preview = <MarkdownPreview />
-            break
+    const contentTypeParts = contentType?.split("/") ?? ""
+    if (contentTypeParts[0] === "text") {
+        preview = <TextPreview file={file} />
+    } else if (contentTypeParts[0] === "image") {
+        preview = <ImagePreview file={file} />
+    } else if (contentType === "application/json") {
+        preview = <JsonPreview />
+    } else {
+        preview = <p>Content type <b>{contentType}</b> is not supported</p>
     }
 
     return (
         <FieldSet header="File Viewer:">
-            <p>{contentType}</p>
             {preview}
         </FieldSet>
     )

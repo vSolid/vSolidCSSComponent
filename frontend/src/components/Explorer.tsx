@@ -1,4 +1,4 @@
-import { useDataset } from "../hooks/datasets"
+import { isContainer, isFileData, useResource } from "../hooks/resource"
 import ContainerViewer from "./viewers/ContainerViewer"
 import FileViewer from "./viewers/FileViewer"
 import ThingsViewer from "./viewers/ThingsViewer"
@@ -8,17 +8,22 @@ interface Props {
 }
 
 function Explorer({ url }: Props) {
-    const dataset = useDataset(url)
+    const resource = useResource(url)
+    
+    if (!resource) return <p>No resource found!</p>
 
-    if (!dataset) return <></>
+    const fileViewer = isFileData(resource) ? <FileViewer file={resource} /> : <></>
+
+    const containerViewer = isContainer(resource) ? <ContainerViewer dataset={resource} /> : <></>
+    const thingsViewer = isContainer(resource) ? <ThingsViewer dataset={resource} /> : <></>
 
     return (
         <>
             <h2>Explorer</h2>
             <div>
-                <FileViewer fileURL={url} />
-                <ContainerViewer dataset={dataset} />
-                <ThingsViewer dataset={dataset} />
+                {fileViewer}
+                {containerViewer}
+                {thingsViewer}
             </div>
         </>
     )
