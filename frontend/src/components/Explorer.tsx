@@ -3,6 +3,8 @@ import ContainerViewer from "./viewers/ContainerViewer"
 import FileViewer from "./viewers/FileViewer"
 import ThingsViewer from "./viewers/ThingsViewer"
 import TurtleViewer from "./viewers/TurtleViewer"
+import FieldSet from "./ui/FieldSet"
+import { CreateContainerButton } from "./buttons/create_container"
 
 interface Props {
     url: string
@@ -10,7 +12,7 @@ interface Props {
 
 function Explorer({ url }: Props) {
     const resource = useResource(url)
-    
+
     if (!resource) return <p>No resource found!</p>
 
     const fileViewer = isFileData(resource) ? <FileViewer file={resource} /> : <></>
@@ -21,6 +23,12 @@ function Explorer({ url }: Props) {
 
     return (
         <>
+            <FieldSet header="Actions:">
+                <FieldSet header="Create Container:">
+                    <CreateContainerButton url={url} />
+                </FieldSet>
+            </FieldSet>
+
             <h2>Explorer</h2>
             <div>
                 {fileViewer}
