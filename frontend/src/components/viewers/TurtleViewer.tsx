@@ -17,7 +17,10 @@ function TurtleViewer({ dataset }: Props) {
 
     return (
         <FieldSet header="Raw Turtle:">
-            <div style={{whiteSpace: "pre-line"}}>{turtleContent}</div>
+            <details>
+                <summary>Show/hide</summary>
+                <div style={{whiteSpace: "pre-line"}}>{turtleContent}</div>
+            </details>
         </FieldSet>
     )
 }

@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import { FileData } from "../../hooks/resource"
 
 interface Props {
