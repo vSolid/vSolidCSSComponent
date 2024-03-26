@@ -1,23 +1,20 @@
 import { getContentType } from "@inrupt/solid-client";
-import FieldSet from "../ui/FieldSet";
+import { useFile } from "../../hooks/file";
 import ImagePreview from "../preview/ImagePreview";
-import TextPreview from "../preview/TextPreview";
 import JsonPreview from "../preview/JsonPreview";
-import { FileData } from "../../hooks/resource";
+import TextPreview from "../preview/TextPreview";
+import FieldSet from "../ui/FieldSet";
 
-interface Props {
-    file: FileData
-}
-
-function FileViewer({ file }: Props) {
+function FileViewer() {
+    const file = useFile()
     const contentType = getContentType(file)
 
     let preview = <></>
     const contentTypeParts = contentType?.split("/") ?? ""
     if (contentTypeParts[0] === "text") {
-        preview = <TextPreview file={file} />
+        preview = <TextPreview/>
     } else if (contentTypeParts[0] === "image") {
-        preview = <ImagePreview file={file} />
+        preview = <ImagePreview />
     } else if (contentType === "application/json") {
         preview = <JsonPreview />
     } else {

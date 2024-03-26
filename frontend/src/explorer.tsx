@@ -1,6 +1,6 @@
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Explorer from "./components/Explorer";
-import { useEffect, useState } from "react";
 
 function Explore() {
   const [search] = useSearchParams()
@@ -29,7 +29,7 @@ function Explore() {
         </form>
       </nav>
 
-      <Explorer url={url} />
+      <Explorer />
     </>
   )
 }

@@ -1,6 +1,6 @@
 import { SolidDataset, buildThing, createThing, saveSolidDatasetAt, setThing } from "@inrupt/solid-client"
-import { RDF, SCHEMA_INRUPT } from "@inrupt/vocab-common-rdf"
 import { fetch } from "@inrupt/solid-client-authn-browser"
+import { SCHEMA_INRUPT } from "@inrupt/vocab-common-rdf"
 
 interface Props {
     url: string
@@ -9,11 +9,10 @@ interface Props {
 
 export function AddThingButton({ url, dataset }: Props) {
     async function addThing() {
-        const name = prompt("Specify name for thing (this will create a prebuild thing):")
+        const name = prompt("You are about to create a new Thing. Please enter the the name of the it:")
         if (name) {
             const newBookThing1 = buildThing(createThing({ name: name }))
                 .addStringNoLocale(SCHEMA_INRUPT.name, "ABC123 of Example Literature")
-                .addUrl(RDF.type, "https://schema.org/Book")
                 .build()
 
             const newDataset = setThing(dataset, newBookThing1)
@@ -22,6 +21,6 @@ export function AddThingButton({ url, dataset }: Props) {
     }
 
     return (
-        <button onClick={addThing}>Add Thing</button>
+        <button onClick={addThing}>New Thing</button>
     )
 }

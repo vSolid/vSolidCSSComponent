@@ -2,7 +2,7 @@ import { Thing, getPropertyAll } from "@inrupt/solid-client";
 import PredicateViewer from "./PredicateViewer";
 
 interface Props {
-    thing: Thing;
+    thing: Thing
 }
 
 function ThingViewer({ thing }: Props) {
@@ -12,6 +12,7 @@ function ThingViewer({ thing }: Props) {
         <details>
             <summary><a href={thing.url}>{thing.url}</a></summary>
             {predicates}
+            {/*<NewPropertyButton url={url} dataset={dataset} thing={thing} />*/}
         </details>
     )
 }

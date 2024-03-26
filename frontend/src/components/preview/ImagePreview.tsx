@@ -1,18 +1,13 @@
-import { FileData } from "../../hooks/resource";
+import { useFile } from "../../hooks/file"
 
-interface Props {
-    file: FileData
-}
-
-function ImagePreview({ file }: Props) {
+function ImagePreview() {
+    const file = useFile()
+    
     return (
-        <>
-        {/*<img
+        <img
             src={URL.createObjectURL(file.blob)}
             className="mx-auto"
-    />*/}
-        <p>N/A</p>
-        </>
+        />
     )
 }
 

@@ -1,20 +1,16 @@
-import { useEffect, useState } from "react"
-import { FileData } from "../../hooks/resource";
+import { useEffect, useState } from "react";
+import { useFile } from "../../hooks/file";
 
-interface Props {
-    file: FileData
-}
-
-function TextPreview({ file }: Props) {
+function TextPreview() {
+    const file = useFile()
     const [content, setContent] = useState<string>();
 
     useEffect(() => {
-        console.log(file)
-        //file.text().then(setContent)
+        file.blob.text().then(setContent)
     }, [file])
 
     return (
-        <p>N/A</p>
+        <p style={{ whiteSpace: "pre-line" }}>{content}</p>
     )
 }
 

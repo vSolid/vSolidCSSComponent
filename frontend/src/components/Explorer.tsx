@@ -1,62 +1,68 @@
-import { useResource } from "../hooks/resource"
-import ContainerViewer from "./viewers/ContainerViewer"
-import FileViewer from "./viewers/FileViewer"
-import ThingsViewer from "./viewers/ThingsViewer"
-import TurtleViewer from "./viewers/TurtleViewer"
-import { CreateContainerButton } from "./buttons/create_container"
+import { isRawData, responseToResourceInfo, responseToSolidDataset } from "@inrupt/solid-client"
+import { fetch } from "@inrupt/solid-client-authn-browser"
+import { SolidDataset, WithServerResourceInfo } from "@inrupt/solid-client/interfaces"
+import { useEffect, useState } from "react"
+import { useSearchParams } from "react-router-dom"
+import { ResourceContext } from "../contexts/resource"
+import { URLContext } from "../contexts/url"
 import FieldSet from "./ui/FieldSet"
-import { DeleteResourceButton } from "./buttons/delete_resource"
-import { CreateDatasetButton } from "./buttons/create_dataset"
-import { File, Resource, SolidDataset, WithResourceInfo } from "@inrupt/solid-client/interfaces"
-import { isRawData, isContainer as solidIsContainer } from "@inrupt/solid-client"
-import { AddThingButton } from "./buttons/add_thing"
+import DatasetViewer from "./viewers/DatasetViewer"
+import FileViewer from "./viewers/FileViewer"
 
-interface Props {
-    url: string
+export type Resource = (SolidDataset | FileData) & WithServerResourceInfo
+
+export type FileData = WithServerResourceInfo & {
+    blob: Blob;
 }
 
-function isDataset(resource: Resource): resource is SolidDataset {
-    return resource.type == "Dataset"
-}
+function Explorer() {
+    const [resource, setResource] = useState<Resource>()
+    const [search] = useSearchParams()
+    const url = search.get('url')
 
-function isContainer(resource: Resource & WithResourceInfo): resource is SolidDataset & WithResourceInfo {
-    return solidIsContainer(resource)
-}
+    if (!url) return <></>
 
-function isFileData(resource: Resource & WithResourceInfo): resource is File & WithResourceInfo {
-    return isRawData(resource)
-}
+    async function fetchResource() {
+        if (!url) return
+        const response = await fetch(url)
+        const resourceInfo = responseToResourceInfo(response)
 
-function Explorer({ url }: Props) {
-    const resource = useResource(url)
+        if (isRawData(resourceInfo)) {
+            // Unstructured Data (Non-RDF Resource)
+            setResource({
+                ...resourceInfo,
+                blob: await response.blob()
+            })
+        } else {
+            // Structured Data (RDF Resource)
+            setResource(await responseToSolidDataset(response))
+        }
+    }
 
-    if (!resource) return <p>No resource found!</p>
+    useEffect(() => {
+        fetchResource()
+    }, [url])
 
-    const fileViewer = isFileData(resource) ? <FileViewer file={resource} /> : <></>
-    const containerViewer = isContainer(resource) ? <ContainerViewer dataset={resource} /> : <></>
-    const thingsViewer = isDataset(resource) ? <ThingsViewer dataset={resource} /> : <></>
-    const turtleViewer = isContainer(resource) ? <TurtleViewer dataset={resource} /> : <></>
+    if (!resource) return <></>
 
     return (
-        <>
-            <h2>Explorer</h2>
-            <div>
-                <FieldSet header="Actions:">
-                    <CreateContainerButton url={url} />
-                    <CreateDatasetButton url={url} />
-                    {isDataset(resource) ? <AddThingButton url={url} dataset={resource} /> : <></>}
-                </FieldSet>
+        <ResourceContext.Provider value={{ resource, fetchResource }}>
+            <URLContext.Provider value={{ url }}>
+                <h2>Explorer</h2>
+                <div>
+                    {/* Structured Data (RDF Resource) */}
+                    {!isRawData(resource) && <DatasetViewer />}
 
-                {fileViewer}
-                {containerViewer}
-                {thingsViewer}
-                {turtleViewer}
+                    {/* Unstructured Data (Non-RDF Resource) */}
+                    {isRawData(resource) && <FileViewer />}
 
-                <FieldSet header="Danger Zone:">
-                    <DeleteResourceButton resource={resource} />
-                </FieldSet>
-            </div>
-        </>
+                    <FieldSet header="Danger Zone:">
+                        <></>
+                        {/*<DeleteResourceButton/>*/}
+                    </FieldSet>
+                </div>
+            </URLContext.Provider>
+        </ResourceContext.Provider>
     )
 }
 
