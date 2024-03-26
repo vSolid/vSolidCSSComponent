@@ -1,4 +1,4 @@
-import { FileData } from "../../hooks/resource"
+import { FileData } from "../../hooks/resource";
 
 interface Props {
     file: FileData
@@ -6,10 +6,13 @@ interface Props {
 
 function ImagePreview({ file }: Props) {
     return (
-        <img
+        <>
+        {/*<img
             src={URL.createObjectURL(file.blob)}
             className="mx-auto"
-          />
+    />*/}
+        <p>N/A</p>
+        </>
     )
 }
 

@@ -1,6 +1,6 @@
 import { SolidDataset, WithResourceInfo, getContainedResourceUrlAll } from "@inrupt/solid-client"
-import { Link } from "react-router-dom";
-import FieldSet from "../ui/FieldSet";
+import { Link } from "react-router-dom"
+import FieldSet from "../ui/FieldSet"
 
 interface Props {
     dataset: SolidDataset & WithResourceInfo;
@@ -12,7 +12,9 @@ function ContainerViewer({ dataset }: Props) {
     return (
         <FieldSet header="Contained Resources:">
             {containedResources.map(url => (
-                <li key={url}><Link to={`/explore/?url=${encodeURIComponent(url)}`}>{url}</Link></li>
+                <li key={url}>
+                    <Link to={`/explore/?url=${encodeURIComponent(url)}`}>{url}</Link>
+                </li>
             ))}
         </FieldSet>
     )

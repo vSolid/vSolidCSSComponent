@@ -4,6 +4,7 @@ import { EVENTS, getDefaultSession, handleIncomingRedirect } from '@inrupt/solid
 import SigninView from './pages/sign_in';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { SignoutButton } from './components/buttons/signout_button';
+import FieldSet from './components/ui/FieldSet';
 
 function App() {
     const [sessionInfo, setSessionInfo] = useState<SessionInfo | null | undefined>(null);
@@ -35,7 +36,9 @@ function App() {
         <SessionContext.Provider value={sessionInfo}>
             <Outlet />
 
-            <SignoutButton />
+            <FieldSet header="Account:">
+                <SignoutButton />
+            </FieldSet>
         </SessionContext.Provider>
     )
 }

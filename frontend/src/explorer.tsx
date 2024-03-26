@@ -17,7 +17,7 @@ function Explore() {
 
   return (
     <>
-      <div>
+      <nav>
         <form onSubmit={(e) => {
           e.preventDefault()
           e.stopPropagation()
@@ -25,9 +25,9 @@ function Explore() {
         }}>
           <label htmlFor="pod_url"><b>Pod: </b></label>
           <input style={{ width: "210px" }} id="pod_url" value={urlValue} onChange={(e) => setUrlValue(e.target.value)} />
-          <input type="submit" value="Goto" />
+          <input type="submit" value="Go to" />
         </form>
-      </div>
+      </nav>
 
       <Explorer url={url} />
     </>

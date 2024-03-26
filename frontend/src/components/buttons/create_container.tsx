@@ -1,37 +1,21 @@
-import { createContainerAt, getSourceIri } from "@inrupt/solid-client"
-import React, { useEffect, useState } from "react"
+import { createContainerAt } from "@inrupt/solid-client"
 import { fetch } from "@inrupt/solid-client-authn-browser"
-import { useNavigate } from "react-router-dom";
 
 interface Props {
     url: string | undefined
 }
 
-export function CreateContainerButton({ url = "" }: Props) {
-    const [containerUrl, setContainerUrl] = useState(url);
-    const navigate = useNavigate()
+export function CreateContainerButton({ url }: Props) {
+    function onClick() {
+        const containerURL = prompt("You are about to create a new container. Please enter the URL for it:", url)
 
-    useEffect(() => {
-        setContainerUrl(url)
-    }, [url])
-
-    async function createContainer(e: React.FormEvent) {
-        e.preventDefault()
-        e.stopPropagation()
-
-        createContainerAt(containerUrl, { fetch: fetch })
-        .then(dataset => { 
-            navigate(`/explore/?url=${encodeURIComponent(getSourceIri(dataset))}`)
-        })
-        .catch(alert)
+        if (containerURL) {
+            createContainerAt(containerURL, { fetch: fetch })
+            .catch(alert)
+        }
     }
 
     return (
-        <form onSubmit={createContainer}>
-            <label htmlFor="container_url">Container URL: </label>
-            <input style={{ width: "250px" }} placeholder="The new URL for the container" id="container_url" name="container_url" value={containerUrl} onChange={(e) => setContainerUrl(e.target.value)} />
-            <input type="submit" value="Create" />
-            <legend>This will create an empty container at the given URL.</legend>
-        </form>
+        <button onClick={onClick}>Create Container</button>
     )
 }

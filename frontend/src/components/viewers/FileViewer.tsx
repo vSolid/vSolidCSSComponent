@@ -1,9 +1,9 @@
 import { getContentType } from "@inrupt/solid-client";
 import FieldSet from "../ui/FieldSet";
-import { FileData } from "../../hooks/resource";
 import ImagePreview from "../preview/ImagePreview";
 import TextPreview from "../preview/TextPreview";
 import JsonPreview from "../preview/JsonPreview";
+import { FileData } from "../../hooks/resource";
 
 interface Props {
     file: FileData

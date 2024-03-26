@@ -4,6 +4,7 @@ import App from './_app'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Home from './pages';
 import Explore from './explorer';
+import "./index.css"
 
 const router = createBrowserRouter([
   {
