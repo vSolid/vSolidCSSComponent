@@ -1,10 +1,10 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './_app'
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import Home from './pages';
-import Explore from './explorer';
-import "./index.css"
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import App from './_app';
+import Explore from "./explore";
+import "./index.css";
+import Home from './pages/home';
 
 const router = createBrowserRouter([
   {

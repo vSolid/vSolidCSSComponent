@@ -1,11 +1,8 @@
-import { isRawData, responseToResourceInfo, responseToSolidDataset } from "@inrupt/solid-client"
-import { fetch } from "@inrupt/solid-client-authn-browser"
+import { isRawData } from "@inrupt/solid-client"
 import { SolidDataset, WithServerResourceInfo } from "@inrupt/solid-client/interfaces"
-import { useEffect, useState } from "react"
-import { useSearchParams } from "react-router-dom"
-import { ResourceContext } from "../contexts/resource"
-import { URLContext } from "../contexts/url"
+import { useResource } from "../contexts/resource"
 import { DeleteResourceButton } from "./buttons/delete_resource"
+import NotFound from "./ui/Error"
 import FieldSet from "./ui/FieldSet"
 import DatasetViewer from "./viewers/DatasetViewer"
 import FileViewer from "./viewers/FileViewer"
@@ -17,51 +14,24 @@ export type FileData = WithServerResourceInfo & {
 }
 
 function Explorer() {
-    const [resource, setResource] = useState<Resource>()
-    const [search] = useSearchParams()
-    const url = search.get('url')
+    const { resource, error } = useResource()
 
-    if (!url) return <></>
+    if (error) return <NotFound />
 
-    async function fetchResource() {
-        if (!url) return
-        const response = await fetch(url)
-        const resourceInfo = responseToResourceInfo(response)
-
-        if (isRawData(resourceInfo)) {
-            // Unstructured Data (Non-RDF Resource)
-            setResource({
-                ...resourceInfo,
-                blob: await response.blob()
-            })
-        } else {
-            // Structured Data (RDF Resource)
-            setResource(await responseToSolidDataset(response))
-        }
-    }
-
-    useEffect(() => {
-        fetchResource()
-    }, [url])
-
-    if (!resource) return <></>
+    if (!resource) return
 
     return (
-        <ResourceContext.Provider value={{ resource, fetchResource }}>
-            <URLContext.Provider value={{ url }}>
-                <div>
-                    {/* Structured Data (RDF Resource) */}
-                    {!isRawData(resource) && <DatasetViewer />}
+        <div>
+            {/* Structured Data (RDF Resource) */}
+            {!isRawData(resource) && <DatasetViewer />}
 
-                    {/* Unstructured Data (Non-RDF Resource) */}
-                    {isRawData(resource) && <FileViewer />}
+            {/* Unstructured Data (Non-RDF Resource) */}
+            {isRawData(resource) && <FileViewer />}
 
-                    <FieldSet header="Danger Zone:">
-                        <DeleteResourceButton />
-                    </FieldSet>
-                </div>
-            </URLContext.Provider>
-        </ResourceContext.Provider>
+            <FieldSet header="Danger Zone:">
+                <DeleteResourceButton />
+            </FieldSet>
+        </div>
     )
 }
 

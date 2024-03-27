@@ -55,17 +55,23 @@ function ThingsViewer() {
             <FieldSet header="Things:">
                 {things.map((thing, i) => <ThingViewer key={i} thing={thing} />)}
 
-                <button onClick={() => setShowThingEditor(!showThingEditor)}>Add Thing</button>
+                <button className="mt-2" onClick={() => setShowThingEditor(!showThingEditor)}>Add Thing</button>
                 {showThingEditor && (
-                    <form onSubmit={addThing}>
-                        <label htmlFor="subject">Subject:</label>
-                        <input ref={subjectRef} name="subject" id="subject" />
+                    <form className="mt-2 flex gap-2" onSubmit={addThing}>
+                        <span>
+                            <label htmlFor="subject">Subject:</label>
+                            <input ref={subjectRef} name="subject" id="subject" />
+                        </span>
 
-                        <label htmlFor="predicate">Predicate:</label>
-                        <input ref={predicateRef} name="predicate" id="predicate" />
+                        <span>
+                            <label htmlFor="predicate">Predicate:</label>
+                            <input ref={predicateRef} name="predicate" id="predicate" />
+                        </span>
 
-                        <label htmlFor="object">Object:</label>
-                        <input ref={objectRef} name="object" id="object" />
+                        <span>
+                            <label htmlFor="object">Object:</label>
+                            <input ref={objectRef} name="object" id="object" />
+                        </span>
 
                         <button type="submit">Create</button>
                     </form>

@@ -6,7 +6,7 @@ function ImagePreview() {
     return (
         <img
             src={URL.createObjectURL(file.blob)}
-            className="mx-auto"
+            className="mx-auto object-contain w-full"
         />
     )
 }

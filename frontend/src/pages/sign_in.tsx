@@ -14,13 +14,13 @@ function SigninView() {
     }
 
     return (
-        <>
+        <div className="rounded-lg p-8 border-1 border-gray-900">
             <form onSubmit={loginWithProvider}>
                 <label htmlFor="provider">Provider: </label>
                 <input value={provider} placeholder="provider" onChange={e => setProvider(e.target.value)} />
-                <button type="submit">Continue</button>
+                <button className="ml-2" type="submit">Continue</button>
             </form>
-        </>
+        </div>
     )
 }
 

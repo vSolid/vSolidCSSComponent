@@ -20,7 +20,7 @@ function ContainerViewer() {
         if (name) {
             await createContainerAt(url + name, { fetch: fetch })
         } else {
-            await createContainerInContainer("http://localhost:3000/sebs", { fetch: fetch })
+            await createContainerInContainer(url, { fetch: fetch })
         }
         fetchResource()
     }
@@ -45,9 +45,11 @@ function ContainerViewer() {
                     <Link to={`/explore/?url=${encodeURIComponent(url)}`}>{url}</Link>
                 </li>
             ))}
-
-            <button onClick={addContainer}>Add Container</button>
-            <button onClick={addResource}>Add Resource</button>
+            <div className="mt-2">
+                <button onClick={addContainer}>Add Container</button>
+                &nbsp;
+                <button onClick={addResource}>Add Resource</button>
+            </div>
         </FieldSet>
     </>)
 }

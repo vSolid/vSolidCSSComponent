@@ -1,10 +1,10 @@
+import { getPodUrlAll } from '@inrupt/solid-client';
 import { fetch } from '@inrupt/solid-client-authn-browser';
 import { useEffect, useState } from 'react';
-import { getPodUrlAll } from '@inrupt/solid-client';
-import { useSessionInfo } from '../hooks/session';
-import { useRoot } from '../hooks/root';
 import { Link } from 'react-router-dom';
 import FieldSet from '../components/ui/FieldSet';
+import { useRoot } from '../hooks/root';
+import { useSessionInfo } from '../hooks/session';
 
 function Home() {
     const sessionInfo = useSessionInfo()
