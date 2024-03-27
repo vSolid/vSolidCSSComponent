@@ -1,4 +1,4 @@
-import { ThingPersisted, UrlString, getBooleanAll, getDatetimeAll, getDecimalAll, getIntegerAll, getStringByLocaleAll, getStringNoLocaleAll, getUrlAll } from "@inrupt/solid-client"
+import { ThingPersisted, UrlString, getBooleanAll, getDatetimeAll, getDecimalAll, getIntegerAll, getStringByLocaleAll, getStringNoLocaleAll, getUrlAll } from "@inrupt/solid-client";
 import FieldSet from "../ui/FieldSet";
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
 
 function PredicateViewer({ thing, predicate }: Props) {
     const urlValues = getUrlAll(thing, predicate).map((url, key) => <li key={key}><a href={url}>{url}</a></li>)
-    const stringNoLocaleValues = getStringNoLocaleAll(thing, predicate)
+    const stringNoLocaleValues = getStringNoLocaleAll(thing, predicate).map((val, key) => <li key={key}>{val}</li>)
     const integerValues = getIntegerAll(thing, predicate)
     const decimalValues = getDecimalAll(thing, predicate)
     const booleanValues = getBooleanAll(thing, predicate)

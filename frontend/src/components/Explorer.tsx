@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { ResourceContext } from "../contexts/resource"
 import { URLContext } from "../contexts/url"
+import { DeleteResourceButton } from "./buttons/delete_resource"
 import FieldSet from "./ui/FieldSet"
 import DatasetViewer from "./viewers/DatasetViewer"
 import FileViewer from "./viewers/FileViewer"
@@ -48,7 +49,6 @@ function Explorer() {
     return (
         <ResourceContext.Provider value={{ resource, fetchResource }}>
             <URLContext.Provider value={{ url }}>
-                <h2>Explorer</h2>
                 <div>
                     {/* Structured Data (RDF Resource) */}
                     {!isRawData(resource) && <DatasetViewer />}
@@ -57,8 +57,7 @@ function Explorer() {
                     {isRawData(resource) && <FileViewer />}
 
                     <FieldSet header="Danger Zone:">
-                        <></>
-                        {/*<DeleteResourceButton/>*/}
+                        <DeleteResourceButton />
                     </FieldSet>
                 </div>
             </URLContext.Provider>

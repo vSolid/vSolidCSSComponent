@@ -1,13 +1,11 @@
-import { SolidDataset, solidDatasetAsTurtle } from "@inrupt/solid-client";
+import { solidDatasetAsTurtle } from "@inrupt/solid-client";
 import { useEffect, useState } from "react";
+import { useDataset } from "../../hooks/dataset";
 import FieldSet from "../ui/FieldSet";
 
-interface Props {
-    dataset: SolidDataset
-}
-
-function TurtleViewer({ dataset }: Props) {
+function TurtleViewer() {
     const [turtleContent, setTurtleContent] = useState<string>()
+    const dataset = useDataset()
 
     useEffect(() => {
         solidDatasetAsTurtle(dataset).then(turtle => {

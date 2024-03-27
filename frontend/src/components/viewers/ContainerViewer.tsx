@@ -38,7 +38,7 @@ function ContainerViewer() {
 
     if (!isContainer) return <></>
 
-    return (
+    return (<>
         <FieldSet header="Contained Resources:">
             {resources.map(url => (
                 <li key={url}>
@@ -49,7 +49,7 @@ function ContainerViewer() {
             <button onClick={addContainer}>Add Container</button>
             <button onClick={addResource}>Add Resource</button>
         </FieldSet>
-    )
+    </>)
 }
 
 export default ContainerViewer

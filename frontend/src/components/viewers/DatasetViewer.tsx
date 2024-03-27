@@ -1,17 +1,21 @@
+import { isContainer } from "@inrupt/solid-client";
+import { useUrl } from "../../contexts/url";
+import { useDataset } from "../../hooks/dataset";
 import ContainerViewer from "./ContainerViewer";
 import ThingsViewer from "./ThingsViewer";
+import TurtleViewer from "./TurtleViewer";
 
-function DatasetViewer() {       
+function DatasetViewer() {
+    const dataset = useDataset()
+    const { url } = useUrl()
+
     return (
         <>
-            {/*<FieldSet header="Actions:">
-                <CreateContainerButton url={url} />
-                <CreateDatasetButton url={url} />
-                <AddThingButton url={url} dataset={dataset} />
-            </FieldSet>*/}
+            <h3>{isContainer(dataset) ? `CONTAINER:` : `THING:`} {url}</h3>
 
             <ContainerViewer />
             <ThingsViewer />
+            <TurtleViewer />
         </>
     )
 }
