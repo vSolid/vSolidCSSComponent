@@ -32,14 +32,14 @@ export class CustomRepresentationConvertingStore<T extends ResourceStore = Resou
   }
   public async setRepresentation(identifier: ResourceIdentifier, representation: Representation, conditions?: Conditions): Promise<ChangeMap> {
     this.logger.info(`We just called custom setRepresentation(): identifier: ${identifier.path}!`);
-    try {
+    /*try {
       const currentRepresentation = await this.getRepresentation(identifier, {}, conditions);
       const newIdentifier = { path: identifier.path + (new Date()).toISOString().replace(":",".") };
       await super.setRepresentation(newIdentifier, currentRepresentation, conditions);
       this.logger.info(`We just created a copy of the old resource at: ${newIdentifier.path}!`);
     } catch (error) {
       this.logger.error(error as string);
-    }
+    }*/
     return super.setRepresentation(identifier, representation, conditions);
   }
 }
