@@ -1,23 +1,12 @@
-import { InternalServerError, Representation, RepresentationPatcher, RepresentationPatcherInput, getLoggerFor } from "@solid/community-server";
+import { InternalServerError, NotImplementedHttpError, Patch, Representation, RepresentationPatcher, RepresentationPatcherInput, SparqlUpdatePatch, getLoggerFor } from "@solid/community-server";
 import type { Store } from 'n3';
+import { Algebra } from 'sparqlalgebrajs';
 
 interface RdfDatasetRepresentation extends Representation {
-    /**
-     * In {@link RdfDatasetRepresentation}, there is no data stream.
-     */
-    data: never;
-    /**
-     * The data of this representation which conforms to the RDF/JS Dataset interface
-     * (https://rdf.js.org/dataset-spec/#dataset-interface).
-     */
-    dataset: Store;
-  }
+  data: never;
+  dataset: Store;
+}
 
-/**
- * Supports application/sparql-update PATCH requests on RDF resources.
- *
- * Only DELETE/INSERT updates without variables are supported.
- */
 export class CustomSparqlUpdatePatcher extends RepresentationPatcher<RdfDatasetRepresentation> {
   protected readonly logger = getLoggerFor(this);
 
@@ -27,14 +16,31 @@ export class CustomSparqlUpdatePatcher extends RepresentationPatcher<RdfDatasetR
   }
 
   public async canHandle({ patch }: RepresentationPatcherInput<RdfDatasetRepresentation>): Promise<void> {
-    
+    if (!this.isSparqlUpdate(patch)) {
+      throw new NotImplementedHttpError('Only SPARQL update patches are supported');
+    }
+  }
+
+  private isSparqlUpdate(patch: Patch): patch is SparqlUpdatePatch {
+    return typeof (patch as SparqlUpdatePatch).algebra === 'object';
   }
 
   public async handle({ identifier, patch, representation }: RepresentationPatcherInput<RdfDatasetRepresentation>):
-  Promise<RdfDatasetRepresentation> {
+    Promise<RdfDatasetRepresentation> {
+    const operation = (patch as SparqlUpdatePatch).algebra;
+
     if (!representation) {
       throw new InternalServerError('Patcher requires a representation as input.');
     }
+
+    const sparqlupdatepatch = (patch as SparqlUpdatePatch)
+
+    if (operation.type == Algebra.types.DELETE_INSERT) {
+      console.log("inserts", sparqlupdatepatch.algebra.insert)
+      console.log("deletes", sparqlupdatepatch.algebra.delete)
+    } 
+
+    //const store = representation.dataset;
 
     this.logger.info("Now performing Sparql Patching")
 

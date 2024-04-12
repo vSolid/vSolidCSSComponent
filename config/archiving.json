@@ -5,7 +5,7 @@
   ],
   "@graph": [
     {
-      "comment": [ "Adds archiving storage capability." ]
+      "comment": [ "A Solid server that stores its resources with archiving capability." ]
     },
     {
       "comment": "Dedicated handlers that apply specific types of patch documents",
@@ -15,6 +15,15 @@
         { "@type": "CustomN3Patcher" },
         { "@type": "CustomSparqlUpdatePatcher" }
       ]
+    },
+    {
+      "comment": "A default store setup with a file system backend.",
+      "@id": "urn:solid-server:default:ResourceStore_Backend",
+      "@type": "ArchivingDataAccessorBasedStore",
+      "identifierStrategy": { "@id": "urn:solid-server:default:IdentifierStrategy" },
+      "auxiliaryStrategy": { "@id": "urn:solid-server:default:AuxiliaryStrategy" },
+      "accessor": { "@id": "urn:solid-server:default:FileDataAccessor" },
+      "metadataStrategy": { "@id": "urn:solid-server:default:MetadataStrategy" }
     }
   ]
 }
