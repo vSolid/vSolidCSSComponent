@@ -1,0 +1,20 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@solid/community-server/^7.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/vsolid/^1.0.0/components/context.jsonld"
+  ],
+  "@graph": [
+    {
+      "comment": [ "Adds archiving storage capability." ]
+    },
+    {
+      "comment": "Dedicated handlers that apply specific types of patch documents",
+      "@id": "urn:solid-server:default:PatchHandler_RDF",
+      "@type": "WaterfallHandler",
+      "handlers": [
+        { "@type": "CustomN3Patcher" },
+        { "@type": "CustomSparqlUpdatePatcher" }
+      ]
+    }
+  ]
+}
