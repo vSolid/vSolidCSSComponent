@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
 import { UrlString, WithServerResourceInfo, getLinkedResourceUrlAll, getResourceInfo, getSourceUrl } from "@inrupt/solid-client";
-import { space } from "rdf-namespaces";
 import { fetch } from '@inrupt/solid-client-authn-browser';
+import { useEffect, useState } from "react";
 
 export function useRoot(url: UrlString) {
     const [root, setRoot] = useState<string | undefined | null>();
@@ -29,7 +28,7 @@ async function getRoot(
         resourceInfo &&
         getLinkedResourceUrlAll(resourceInfo)
           ["type"]?.map((url) => url.toLowerCase())
-          .includes(space.storage.toLowerCase())
+          .includes("http://www.w3.org/ns/pim/space#storage")
       ) {
         return getSourceUrl(resourceInfo);
       }

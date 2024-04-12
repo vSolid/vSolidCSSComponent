@@ -6,6 +6,8 @@ export function DeleteResourceButton() {
     const { resource, fetchResource } = useResource()
 
     function onDelete() {
+        if (!resource) return
+        
         if (confirm("Are you sure you want to delete this resource?")) {
             if (isContainer(resource)) {
                 deleteContainer(resource, { fetch: fetch }).catch(alert)
