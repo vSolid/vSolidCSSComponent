@@ -12,8 +12,8 @@
       "@id": "urn:solid-server:default:PatchHandler_RDF",
       "@type": "WaterfallHandler",
       "handlers": [
-        { "@type": "CustomN3Patcher" },
-        { "@type": "CustomSparqlUpdatePatcher" }
+        { "@type": "N3Patcher" },
+        { "@type": "SparqlUpdatePatcher" }
       ]
     },
     {
@@ -24,6 +24,12 @@
       "auxiliaryStrategy": { "@id": "urn:solid-server:default:AuxiliaryStrategy" },
       "accessor": { "@id": "urn:solid-server:default:FileDataAccessor" },
       "metadataStrategy": { "@id": "urn:solid-server:default:MetadataStrategy" }
+    },
+    {
+      "comment": "Custom Stores data on a file system.",
+      "@id": "urn:solid-server:default:FileDataAccessor",
+      "@type": "CustomFileDataAccessor",
+      "resourceMapper": { "@id": "urn:solid-server:default:FileIdentifierMapper" }
     }
   ]
 }

@@ -8,11 +8,13 @@ import {
   Patch,
   Representation,
   ResourceIdentifier,
-  getLoggerFor,
+  getLoggerFor
 } from "@solid/community-server";
 
 export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
   protected readonly logger = getLoggerFor(this);
+
+  private readonly dataaccessor: DataAccessor;
 
   public constructor(
     accessor: DataAccessor,
@@ -21,12 +23,16 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
     metadataStrategy: AuxiliaryStrategy,
   ) {
     super(accessor, identifierStrategy, auxiliaryStrategy, metadataStrategy);
+
+    this.dataaccessor = accessor
   }
 
   public async getRepresentation(
     identifier: ResourceIdentifier,
   ): Promise<Representation> {
     this.logger.info("Someone was trying to GET something!");
+
+    console.log(identifier.path)
 
     return super.getRepresentation(identifier);
   }
@@ -66,6 +72,10 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
     conditions?: Conditions | undefined,
   ): Promise<never> {
     this.logger.info("Someone was trying to PATCH something!");
+
+    console.log(`identifier: ${identifier.path}`, )
+
+    console.log(identifier, patch)
 
     return super.modifyResource(identifier, patch, conditions);
   }
