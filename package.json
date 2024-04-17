@@ -16,9 +16,9 @@
     "https://linkedsoftwaredependencies.org/bundles/npm/vsolid/^1.0.0/dist/": "dist/"
   },
   "scripts": {
-    "start": "community-solid-server -c config.json -f .data -m .",
+    "start": "npm run build && community-solid-server -c config.json -f .data -m .",
     "build": "npm run build:ts && npm run build:components",
-    "build:components": "componentsjs-generator -s src -c dist/components -i .componentsignore -r hello-world",
+    "build:components": "componentsjs-generator -s src -c dist/components -i .componentsignore -r vsolid",
     "build:ts": "tsc",
     "prepare": "npm run build",
     "test": "jest"
@@ -29,6 +29,7 @@
   ],
   "dependencies": {
     "@solid/community-server": "^7.0.3",
+    "node": "^20.12.2",
     "penny-pod-inspector": "^0.1024692321.5216227821"
   },
   "devDependencies": {

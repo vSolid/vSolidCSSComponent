@@ -37,11 +37,6 @@ export default function Toolbar() {
         }
     }
 
-    function getResourceTypeCaption() {
-        const type = getResourceType()
-        return type ? `${type}: ${url}` : ""
-    }
-
     function handleUrlInput(event: ChangeEvent<HTMLInputElement>) {
         setLocalUrl(event.currentTarget.textContent)
     }

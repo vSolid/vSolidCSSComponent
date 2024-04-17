@@ -1,2 +1,6 @@
-export * from './HelloWorld'
-export * from './CustomRepresentationConvertingStore'
+
+export * from './ArchivingDataAccessorBasedStore'
+export * from './CustomFileDataAccessor'
+export * from './CustomN3Patcher'
+export * from './CustomSparqlUpdatePatcher'
+

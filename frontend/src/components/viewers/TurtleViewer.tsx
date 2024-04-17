@@ -31,6 +31,8 @@ function TurtleViewer() {
     }
 
     async function handleSubmit() {
+        if (!url) return
+        
         try {
             const res = await fetch(url, {
                 method: "PUT",

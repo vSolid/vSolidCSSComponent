@@ -20,6 +20,8 @@ function ContainerViewer() {
         if (name) {
             await createContainerAt(url + name, { fetch: fetch })
         } else {
+            if (!url) return
+            
             await createContainerInContainer(url, { fetch: fetch })
         }
         fetchResource()
