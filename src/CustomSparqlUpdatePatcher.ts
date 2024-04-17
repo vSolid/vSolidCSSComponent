@@ -36,8 +36,8 @@ export class CustomSparqlUpdatePatcher extends RepresentationPatcher<RdfDatasetR
     const sparqlupdatepatch = (patch as SparqlUpdatePatch)
 
     if (operation.type == Algebra.types.DELETE_INSERT) {
-      console.log("inserts", sparqlupdatepatch.algebra.insert)
-      console.log("deletes", sparqlupdatepatch.algebra.delete)
+      this.logger.info(`inserts", ${sparqlupdatepatch.algebra.insert}`)
+      this.logger.info(`deletes,  ${sparqlupdatepatch.algebra.delete}`)
     } 
 
     //const store = representation.dataset;

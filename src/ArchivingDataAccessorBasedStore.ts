@@ -8,8 +8,10 @@ import {
   Patch,
   Representation,
   ResourceIdentifier,
+  SparqlUpdatePatch,
   getLoggerFor
 } from "@solid/community-server";
+import { inspect } from 'util'
 
 export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
   protected readonly logger = getLoggerFor(this);
@@ -32,7 +34,7 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
   ): Promise<Representation> {
     this.logger.info("Someone was trying to GET something!");
 
-    console.log(identifier.path)
+    this.logger.info(identifier.path)
 
     return super.getRepresentation(identifier);
   }
@@ -54,6 +56,8 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
   ): Promise<ChangeMap> {
     this.logger.info("Someone was trying to POST something!");
 
+    this.logger.info("ØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØØ");
+
     return super.addResource(container, representation, conditions);
   }
 
@@ -73,10 +77,23 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
   ): Promise<never> {
     this.logger.info("Someone was trying to PATCH something!");
 
-    console.log(`identifier: ${identifier.path}`, )
+    this.logger.info(`identifier: ${identifier.path}`, )
 
-    console.log(identifier, patch)
+    // this.logger.info(`${JSON.stringify(identifier)},  ${JSON.stringify(patch)}`)
+
+    if (this.isSparqlUpdate(patch)) {
+      this.logger.info("It's a SPARQL Update Patch!")
+      const sparqlupdatepatch = (patch as SparqlUpdatePatch)
+      this.logger.warn("Patch" + inspect(sparqlupdatepatch.algebra, undefined, 10));
+    }else{
+        this.logger.info("It's a regular Patch!")
+    }
+
 
     return super.modifyResource(identifier, patch, conditions);
+  }
+
+  private isSparqlUpdate(patch: Patch): patch is SparqlUpdatePatch {
+    return typeof (patch as SparqlUpdatePatch).algebra === 'object';
   }
 }

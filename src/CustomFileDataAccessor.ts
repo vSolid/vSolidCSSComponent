@@ -1,4 +1,4 @@
-import { FileDataAccessor, FileIdentifierMapper } from "@solid/community-server";
+import { FileDataAccessor, FileIdentifierMapper, getLoggerFor } from "@solid/community-server";
 import { Readable } from "stream";
 
 export class CustomFileDataAccessor extends FileDataAccessor {
@@ -7,18 +7,18 @@ export class CustomFileDataAccessor extends FileDataAccessor {
     }
 
     protected async writeDataFile(path: string, data: Readable): Promise<void> {
-        console.log("Now writing data to path:" + path)
+        this.logger.info("Now writing data to path:" + path)
 
         let dataString = '';
         data.on('data', chunk => {
-            dataString += chunk;
+             dataString += chunk;
         });
         data.on('end', () => {
-            console.log("Data:", dataString);
+             this.logger.info(`Data:` + dataString);
         });
 
         data.on('error', err => {
-            console.error("Error reading data:", err);
+            this.logger.error(`Error reading data:, ${err}`);
         });
 
         super.writeDataFile(path, data)
