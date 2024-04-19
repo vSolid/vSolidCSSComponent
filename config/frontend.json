@@ -1,0 +1,30 @@
+{
+    "@context": [
+      "https://linkedsoftwaredependencies.org/bundles/npm/@solid/community-server/^7.0.0/components/context.jsonld",
+      "https://linkedsoftwaredependencies.org/bundles/npm/vsolid/^1.0.0/components/context.jsonld"
+    ],
+    "@graph": [
+      {
+        "comment": "Serve Frontend as default representation",
+        "@id": "urn:solid-server:default:DefaultUiConverter",
+        "@type": "ConstantConverter",
+        "contentType": "text/html",
+        "filePath": "./frontend/dist/index.html",
+        "options_container": true,
+        "options_document": true,
+        "options_minQuality": 1
+      },
+      {
+        "comment": "Serve Frontend static files.",
+        "@id": "urn:solid-server:default:StaticAssetHandler",
+        "@type": "StaticAssetHandler",
+        "assets": [
+          {
+            "@type": "StaticAssetEntry",
+            "relativeUrl": "/assets/",
+            "filePath": "./frontend/dist/assets/"
+          }
+        ]
+      }
+    ]
+  }
