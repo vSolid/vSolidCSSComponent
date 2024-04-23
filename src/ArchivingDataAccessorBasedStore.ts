@@ -109,7 +109,7 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
   ): Promise<never> {
     this.logger.info("Someone was trying to PATCH something!");
 
-    this.logger.info(`identifier: ${identifier.path}`, )
+    this.logger.info(`identifier: ${identifier.path}`,)
 
     if (this.isSparqlUpdate(patch)) {
       this.logger.info("It's a SPARQL Update Patch!")
@@ -118,18 +118,18 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
       const deltaId = await this.generateDelta(identifier, sparqlupdatepatch);
       patch.metadata.set(DataFactory.namedNode(VS.next_delta), deltaId);
       this.dataaccessor.writeMetadata(identifier, patch.metadata);
-    }else{
-        this.logger.info("It's a regular Patch!")
+    } else {
+      this.logger.info("It's a regular Patch!")
     }
 
-    
+
     return await super.modifyResource(identifier, patch, conditions);
   }
 
-  private async generateDelta(identifier: ResourceIdentifier, patch: SparqlUpdatePatch, conditions?: Conditions) : Promise<string> {
+  private async generateDelta(identifier: ResourceIdentifier, patch: SparqlUpdatePatch, conditions?: Conditions): Promise<string> {
     const deltaId = uuid();
     const deltaIdentifier = this.generateDeltaIdentifier(identifier);
-    
+
     let existingQuads: Quad[] = [];
     try {
       const existingDeltaDataStream = await this.dataaccessor.getData(deltaIdentifier)
@@ -148,18 +148,18 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
 
     // map operation quads to delta quads
     const deltaDateQuad = DataFactory.quad(
-      DataFactory.namedNode(deltaId), 
-      DataFactory.namedNode(VS.delta_date), 
+      DataFactory.namedNode(deltaId),
+      DataFactory.namedNode(VS.delta_date),
       DataFactory.literal((new Date()).toISOString())
     );
     const nextDeltaQuad = DataFactory.quad(
-      DataFactory.namedNode(deltaId), 
-      DataFactory.namedNode(VS.next_delta), 
-      headDeltaId?.value 
-        ? DataFactory.namedNode(headDeltaId.value) 
+      DataFactory.namedNode(deltaId),
+      DataFactory.namedNode(VS.next_delta),
+      headDeltaId?.value
+        ? DataFactory.namedNode(headDeltaId.value)
         : DataFactory.blankNode()
     );
-    
+
     const allQuadsToWrite = [
       ...existingQuads,
       ...operationQuads?.map(q => this.mapOperationQuadToDeltaQuad(q, deltaId)),
@@ -167,7 +167,7 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
       nextDeltaQuad
     ];
 
-    const newPatch : Patch = {
+    const newPatch: Patch = {
       data: this.generateStreamFromArray(allQuadsToWrite),
       isEmpty: patch.isEmpty,
       metadata: new RepresentationMetadata(),
@@ -192,26 +192,26 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
   private async readStream(stream: Readable): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       let data = '';
-  
+
       stream.on('data', (chunk: any) => {
         data += chunk?.toString() ?? '';
       });
-  
+
       stream.on('end', () => {
         resolve(data);
       });
-  
+
       stream.on('error', (err: Error) => {
         reject(err);
       });
     });
   }
 
-  private generateDeltaIdentifier(identifier: ResourceIdentifier) : ResourceIdentifier {
+  private generateDeltaIdentifier(identifier: ResourceIdentifier): ResourceIdentifier {
     return { path: identifier.path + ".vSolid" }
   }
 
-  private generateDeltaQuadsFromAlgebraUpdate(algebra: Algebra.Update) : Quad[] {
+  private generateDeltaQuadsFromAlgebraUpdate(algebra: Algebra.Update): Quad[] {
     switch (algebra.type) {
       case Algebra.types.COMPOSITE_UPDATE:
         return algebra.updates?.map(update => this.generateOperationQuadsFromUpdates(update))?.flat() ?? [];
@@ -221,22 +221,22 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
     return [];
   }
 
-  private generateOperationQuadsFromUpdates(algebra: Algebra.Update | Algebra.Pattern) : Quad[] {
+  private generateOperationQuadsFromUpdates(algebra: Algebra.Update | Algebra.Pattern): Quad[] {
     return [
       ...algebra?.delete?.map((q: Quad) => this.generateOperationQuad(q, "delete")) ?? [],
       ...algebra?.insert?.map((q: Quad) => this.generateOperationQuad(q, "insert")) ?? [],
     ]
   }
 
-  private generateOperationQuad(quad: Quad, operation: keyof VS) : Quad {
+  private generateOperationQuad(quad: Quad, operation: keyof VS): Quad {
     const copyQuad = DataFactory.quad(quad.subject, quad.predicate, quad.object);
     const operationQuad = DataFactory.quad(copyQuad, DataFactory.namedNode(VS.operation), DataFactory.namedNode(VS[operation]));
     return operationQuad;
   }
 
-  private generateStreamFromArray<T>(values: T[]) : Guarded<Readable> {
+  private generateStreamFromArray<T>(values: T[]): Guarded<Readable> {
     const writer = new StreamWriter({ format: 'Turtle' });
-    const ttl : string[] = []
+    const ttl: string[] = []
 
     const duplexStream = new Duplex({
       read(size) {
@@ -256,7 +256,7 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
 
     writer.pipe(duplexStream);
     values.forEach(q => writer.write(q));
-    writer._flush((err) => { if (err) { console.error(err); } });	
+    writer._flush((err) => { if (err) { console.error(err); } });
     writer.end();
     const readableStream = Readable.from(ttl);
     return guardStream(readableStream);
