@@ -1,24 +1,29 @@
-import { ETagHandler, GetOperationHandler, HttpRequest, OkResponseDescription, Operation, OperationHttpHandlerInput, ResourceIdentifier, ResourceStore, ResponseDescription } from "@solid/community-server"
+import { BasicRepresentation, ETagHandler, GetOperationHandler, HttpRequest, INTERNAL_QUADS, OkResponseDescription, Operation, OperationHandler, OperationHttpHandlerInput, RepresentationMetadata, ResourceIdentifier, ResourceStore, ResponseDescription, readableToQuads } from "@solid/community-server"
 import { QueryEngine } from '@comunica/query-sparql'
 import { Readable } from "stream"
-import { Store, Parser } from "n3"
+import { Store, StreamParser } from "n3"
+import { Bindings, BindingsStream } from "@comunica/types"
+import arrayifyStream from 'arrayify-stream'
+import { RdfDatasetRepresentation } from "@solid/community-server/dist/http/representation/RdfDatasetRepresentation"
+import { promisify } from "node:util"
 
 export class ArchiveGetOperationHandler extends GetOperationHandler {
-    private readonly _store
+    private readonly _store: ResourceStore;
     private readonly engine
 
-    constructor(store: ResourceStore, eTagHandler: ETagHandler) {
-        super(store, eTagHandler)
-        this._store = store
+    public constructor(store: ResourceStore, eTagHandler: ETagHandler) {
+        super(store, eTagHandler);
+        this._store = store;
         this.engine = new QueryEngine()
     }
+
 
     public async handle({ request, operation }: OperationHttpHandlerInput): Promise<ResponseDescription> {
         let query = this.getSparqlQuery(request)
         if (!query) {
-            return super.handle({ operation })
+            return await super.handle({ operation })
         } else {
-            return this.handleQuery(operation, query)
+            return await this.handleQuery(operation, query)
         }
     }
 
@@ -26,24 +31,28 @@ export class ArchiveGetOperationHandler extends GetOperationHandler {
         let identifier = operation.target
         let delta_identifier = this.getDeltaIdentifier(identifier)
 
-        let body = await this._store.getRepresentation(delta_identifier, operation.preferences, operation.conditions)
+        let representation = await this._store.getRepresentation(delta_identifier, operation.preferences, operation.conditions)
 
-        let parser = new Parser()
-        let data = await this.readStream(body.data)
-        let existingQuads = parser.parse(data)
+        const inputRepresentation: RdfDatasetRepresentation = representation ?
+            representation as RdfDatasetRepresentation :
+            new BasicRepresentation() as RdfDatasetRepresentation
 
-        const store = new Store()
-        store.addQuads(existingQuads)
+        if (representation) {
+            inputRepresentation.dataset = await readableToQuads(representation.data)
+        } else {
+            inputRepresentation.dataset = new Store();
+        }
 
-        const bindingsStream = await this.engine.queryBindings(`${query}`, {
-            sources: [store],
-        });
+        const store = inputRepresentation.dataset
 
-        bindingsStream.on('data', (binding) => {
-            console.log(binding.toString());
+        const bindingsStream = await this.engine.queryBindings(`${query}`, { sources: [store] })
+        const bindings: Bindings[] = await arrayifyStream(bindingsStream)
+
+        bindings.forEach((binding) => {
+            console.log(binding.toString())
         })
 
-        return new OkResponseDescription(body.metadata, body.data)
+        return new OkResponseDescription(representation.metadata, representation.data)
     }
 
     private getDeltaIdentifier(fromIdentifier: ResourceIdentifier): ResourceIdentifier {
@@ -54,23 +63,5 @@ export class ArchiveGetOperationHandler extends GetOperationHandler {
         let url = new URL("http://dummy" + fromRequest.url)
         const queryParams = url.searchParams
         return queryParams.get("query")
-    }
-
-    private async readStream(stream: Readable): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
-            let data = ''
-
-            stream.on('data', (chunk: any) => {
-                data += chunk?.toString() ?? ''
-            })
-
-            stream.on('end', () => {
-                resolve(data)
-            })
-
-            stream.on('error', (err: Error) => {
-                reject(err)
-            })
-        })
     }
 }
