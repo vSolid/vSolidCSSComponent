@@ -1,6 +1,20 @@
+/*
+  <S, P, O>
+
+  <DeltaId1, vs:applies_to, <<S1, P1, O1>, vs:operation, +>> 
+  <DeltaId1, vs:applies_to, <<S2, P2, O2>, vs:operation, ->> 
+  <DeltaId1, vs:applies_to, <<S2, P2, O2>, vs:operation, +>> 
+  <DeltaId1, vs:delta_date, date>
+  <DeltaId1, vs:next_delta, DeltaId2>
+  
+  <DeltaId2, vs:applies_to, <<S1, P1, O1>, vs:operation, +>> 
+  <DeltaId2, vs:applies_to, <<S2, P2, O2>, vs:operation, ->> 
+  <DeltaId2, vs:applies_to, <<S2, P2, O2>, vs:operation, +>> 
+  <DeltaId2, vs:delta_date, date>
+  <DeltaId2, vs:next_delta, DeltaId2>
+*/
 import {
   AuxiliaryStrategy,
-  BaseClientCredentialsStore,
   ChangeMap,
   Conditions,
   DataAccessor,
@@ -13,10 +27,14 @@ import {
   SparqlUpdatePatch,
   getLoggerFor,
   guardStream,
+  Guarded,
 } from "@solid/community-server";
 import { inspect } from 'util'
-import { DataFactory, StreamWriter } from "n3";
+import { DataFactory, StreamWriter, Parser } from "n3";
 import { Duplex, Readable } from "stream";
+import { Algebra } from 'sparqlalgebrajs';
+import { Quad, Term } from "rdf-js";
+import { v4 as uuid } from 'uuid';
 
 export const VS = {
   operation: "https://vsolid.org/properties#operation",
@@ -25,15 +43,13 @@ export const VS = {
   delta_date: "https://vsolid.org/properties#delta_date",
   delta_author: "https://vsolid.org/properties#delta_author",
   next_delta: "https://vsolid.org/properties#next_delta",
+  contains_operation: "https://vsolid.org/properties#contains_operation",
 } as const;
+
+type VS = typeof VS;
 
 export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
   protected readonly logger = getLoggerFor(this);
-
-  private readonly quad = DataFactory.quad;
-  private readonly namedNode = DataFactory.namedNode;
-  private readonly literal = DataFactory.literal;
-
   private readonly dataaccessor: DataAccessor;
 
   public constructor(
@@ -99,56 +115,126 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
       this.logger.info("It's a SPARQL Update Patch!")
       const sparqlupdatepatch = (patch as SparqlUpdatePatch)
       this.logger.warn("Patch path: " + identifier.path);
-      this.logger.warn("Patch" + inspect(sparqlupdatepatch.algebra, undefined, 10));
-      await this.generateDelta(identifier, sparqlupdatepatch);
+      const deltaId = await this.generateDelta(identifier, sparqlupdatepatch);
+      patch.metadata.set(DataFactory.namedNode(VS.next_delta), deltaId);
+      this.dataaccessor.writeMetadata(identifier, patch.metadata);
     }else{
         this.logger.info("It's a regular Patch!")
     }
+
     
     return await super.modifyResource(identifier, patch, conditions);
   }
 
-  private async generateDelta(identifier: ResourceIdentifier, patch: SparqlUpdatePatch, conditions?: Conditions) {
-    const algebra = patch.algebra;
+  private async generateDelta(identifier: ResourceIdentifier, patch: SparqlUpdatePatch, conditions?: Conditions) : Promise<string> {
+    const deltaId = uuid();
+    const deltaIdentifier = this.generateDeltaIdentifier(identifier);
     
-    const quadList = [];
-    switch (algebra.type) {
-      case 'compositeupdate':
-        for (const update of algebra.updates ?? []) {
-          if (update.delete) {
-            for (const q of update.delete) {
-              const _q = this.quad(this.namedNode(q.subject.value), this.namedNode(q.predicate.value), this.literal(q.object.value));
-              const newQuad = this.quad(_q, this.namedNode(VS.operation), this.namedNode(VS.delete));
-              quadList.push(newQuad);
-            }
-          }
-          if (update.insert) {
-            for (const q of update.insert) {
-              const _q = this.quad(this.namedNode(q.subject.value), this.namedNode(q.predicate.value), this.literal(q.object.value));
-              const newQuad = this.quad(_q, this.namedNode(VS.operation), this.namedNode(VS.insert));
-              quadList.push(newQuad);
-            }
-          }
-        }
-        break;
-      case 'deleteinsert':
-        if (algebra.delete) {
-          for (const q of algebra.delete) {
-            const _q = this.quad(this.namedNode(q.subject.value), this.namedNode(q.predicate.value), this.literal(q.object.value));
-            const newQuad = this.quad(_q, this.namedNode(VS.operation), this.namedNode(VS.delete));
-            quadList.push(newQuad);
-          }
-        }
-        if (algebra.insert) {
-          for (const q of algebra.insert) {
-            const _q = this.quad(this.namedNode(q.subject.value), this.namedNode(q.predicate.value), this.literal(q.object.value));
-            const newQuad = this.quad(_q, this.namedNode(VS.operation), this.namedNode(VS.insert));
-            quadList.push(newQuad);
-          }
-        }
-        break;
+    let existingQuads: Quad[] = [];
+    try {
+      const existingDeltaDataStream = await this.dataaccessor.getData(deltaIdentifier)
+      const existingDeltaData = await this.readStream(existingDeltaDataStream);
+      const parser = new Parser();
+      existingQuads = parser.parse(existingDeltaData);
+    } catch (error) {
+      this.printObject(error, "error");
     }
 
+    const existingMetadataStream = await this.dataaccessor.getMetadata(identifier)
+
+    const headDeltaId = existingMetadataStream.get(DataFactory.namedNode(VS.next_delta));
+
+    const operationQuads = this.generateDeltaQuadsFromAlgebraUpdate(patch.algebra);
+
+    // map operation quads to delta quads
+    const deltaDateQuad = DataFactory.quad(
+      DataFactory.namedNode(deltaId), 
+      DataFactory.namedNode(VS.delta_date), 
+      DataFactory.literal((new Date()).toISOString())
+    );
+    const nextDeltaQuad = DataFactory.quad(
+      DataFactory.namedNode(deltaId), 
+      DataFactory.namedNode(VS.next_delta), 
+      headDeltaId?.value 
+        ? DataFactory.namedNode(headDeltaId.value) 
+        : DataFactory.blankNode()
+    );
+    
+    const allQuadsToWrite = [
+      ...existingQuads,
+      ...operationQuads?.map(q => this.mapOperationQuadToDeltaQuad(q, deltaId)),
+      deltaDateQuad,
+      nextDeltaQuad
+    ];
+
+    const newPatch : Patch = {
+      data: this.generateStreamFromArray(allQuadsToWrite),
+      isEmpty: patch.isEmpty,
+      metadata: new RepresentationMetadata(),
+      binary: false,
+    };
+
+    await this.writeData(
+      deltaIdentifier,      // identifier
+      newPatch,             // representation
+      false,                // isContainer
+      true,                 // createContainers
+      true                  // exists
+    );
+
+    return deltaId;
+  }
+
+  private mapOperationQuadToDeltaQuad(operationQuad: Quad, deltaId: string) {
+    return DataFactory.quad(DataFactory.namedNode(deltaId), DataFactory.namedNode(VS.contains_operation), operationQuad);
+  }
+
+  private async readStream(stream: Readable): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      let data = '';
+  
+      stream.on('data', (chunk: any) => {
+        data += chunk?.toString() ?? '';
+      });
+  
+      stream.on('end', () => {
+        resolve(data);
+      });
+  
+      stream.on('error', (err: Error) => {
+        reject(err);
+      });
+    });
+  }
+
+  private generateDeltaIdentifier(identifier: ResourceIdentifier) : ResourceIdentifier {
+    return { path: identifier.path + ".vSolid" }
+  }
+
+  private generateDeltaQuadsFromAlgebraUpdate(algebra: Algebra.Update) : Quad[] {
+    switch (algebra.type) {
+      case Algebra.types.COMPOSITE_UPDATE:
+        return algebra.updates?.map(update => this.generateOperationQuadsFromUpdates(update))?.flat() ?? [];
+      case Algebra.types.DELETE_INSERT:
+        return this.generateOperationQuadsFromUpdates(algebra);
+    }
+    return [];
+  }
+
+  private generateOperationQuadsFromUpdates(algebra: Algebra.Update | Algebra.Pattern) : Quad[] {
+    return [
+      ...algebra?.delete?.map((q: Quad) => this.generateOperationQuad(q, "delete")) ?? [],
+      ...algebra?.insert?.map((q: Quad) => this.generateOperationQuad(q, "insert")) ?? [],
+    ]
+  }
+
+  private generateOperationQuad(quad: Quad, operation: keyof VS) : Quad {
+    const copyQuad = DataFactory.quad(quad.subject, quad.predicate, quad.object);
+    const operationQuad = DataFactory.quad(copyQuad, DataFactory.namedNode(VS.operation), DataFactory.namedNode(VS[operation]));
+    return operationQuad;
+  }
+
+  private generateStreamFromArray<T>(values: T[]) : Guarded<Readable> {
     const writer = new StreamWriter({ format: 'Turtle' });
     const ttl : string[] = []
 
@@ -158,8 +244,8 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
       },
       write(chunk, encoding, callback) {
         const str = chunk.toString();
-        if (str && str !== ".\n") {
-          ttl.push(chunk.toString());
+        if (str) {
+          ttl.push(str);
         }
         callback();
       },
@@ -169,34 +255,32 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
     });
 
     writer.pipe(duplexStream);
-
-    quadList.forEach(q => writer.write(q));
-
+    values.forEach(q => writer.write(q));
     writer._flush((err) => { if (err) { console.error(err); } });	
     writer.end();
-
     const readableStream = Readable.from(ttl);
-    const stream = guardStream(readableStream);
+    return guardStream(readableStream);
+  }
 
-    const deltaIdentifier = { path: identifier.path + "-delta" }
-    
-    const delta_date = VS.delta_date;
-    const date = (new Date()).toISOString();
-    const next_delta = VS.next_delta;
+  private printObject<T>(object: T, consoleType: "info" | "warn" | "error" = "info", depth: number = 10) {
+    this.logger[consoleType](inspect(object, undefined, depth))
+  }
 
-    const meta = new RepresentationMetadata(deltaIdentifier, {
-      delta_date: date, 
-      next_delta: ""
-    });
-
-    const newPatch : Patch = {
-      data: stream,
-      isEmpty: patch.isEmpty,
-      metadata: meta,
-      binary: false,
-    };
-
-    await this.writeData(deltaIdentifier, newPatch, false, true, true);
+  private generateNodeFromTerm(term: Term) {
+    switch (term.termType) {
+      case 'NamedNode':
+        return DataFactory.namedNode(term.value);
+      case 'BlankNode':
+        return DataFactory.blankNode(term.value);
+      case 'Literal':
+        return DataFactory.literal(term.value, term.language);
+      case 'Variable':
+        return DataFactory.variable(term.value);
+      case 'DefaultGraph':
+        return DataFactory.defaultGraph();
+      default:
+        return null;
+    }
   }
 
   private isSparqlUpdate(patch: Patch): patch is SparqlUpdatePatch {
