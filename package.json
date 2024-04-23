@@ -28,7 +28,7 @@
     "config"
   ],
   "dependencies": {
-    "@solid/community-server": "^7.0.3",
+    "@solid/community-server": "^7.0.5",
     "node": "^20.12.2",
     "penny-pod-inspector": "^0.1024692321.5216227821"
   },
