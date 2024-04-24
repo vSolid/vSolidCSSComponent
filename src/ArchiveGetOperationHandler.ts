@@ -1,11 +1,11 @@
-import { BasicRepresentation, ETagHandler, GetOperationHandler, HttpRequest, INTERNAL_QUADS, OkResponseDescription, Operation, OperationHandler, OperationHttpHandlerInput, RepresentationMetadata, ResourceIdentifier, ResourceStore, ResponseDescription, readableToQuads } from "@solid/community-server"
+import { BasicRepresentation, ETagHandler, FileDataAccessor, GetOperationHandler, HttpRequest, INTERNAL_QUADS, OkResponseDescription, Operation, OperationHandler, OperationHttpHandlerInput, RepresentationMetadata, ResourceIdentifier, ResourceStore, ResponseDescription, endOfStream, readableToQuads, readableToString } from "@solid/community-server"
 import { QueryEngine } from '@comunica/query-sparql'
 import { Readable } from "stream"
-import { Store, StreamParser } from "n3"
+import { Store, Parser, Quad } from "n3"
 import { Bindings, BindingsStream } from "@comunica/types"
 import arrayifyStream from 'arrayify-stream'
 import { RdfDatasetRepresentation } from "@solid/community-server/dist/http/representation/RdfDatasetRepresentation"
-import { promisify } from "node:util"
+import { inspect, promisify } from "node:util"
 
 export class ArchiveGetOperationHandler extends GetOperationHandler {
     private readonly _store: ResourceStore;
@@ -16,7 +16,6 @@ export class ArchiveGetOperationHandler extends GetOperationHandler {
         this._store = store;
         this.engine = new QueryEngine()
     }
-
 
     public async handle({ request, operation }: OperationHttpHandlerInput): Promise<ResponseDescription> {
         let query = this.getSparqlQuery(request)
@@ -37,13 +36,14 @@ export class ArchiveGetOperationHandler extends GetOperationHandler {
             representation as RdfDatasetRepresentation :
             new BasicRepresentation() as RdfDatasetRepresentation
 
-        if (representation) {
-            inputRepresentation.dataset = await readableToQuads(representation.data)
-        } else {
-            inputRepresentation.dataset = new Store();
-        }
 
-        const store = inputRepresentation.dataset
+        let str = await this.readStream(representation.data)
+        const parser = new Parser();
+        let existingQuads = parser.parse(str);
+        let store = new Store()
+        store.addQuads(existingQuads)
+
+        inputRepresentation.dataset = store
 
         const bindingsStream = await this.engine.queryBindings(`${query}`, { sources: [store] })
         const bindings: Bindings[] = await arrayifyStream(bindingsStream)
@@ -52,7 +52,28 @@ export class ArchiveGetOperationHandler extends GetOperationHandler {
             console.log(binding.toString())
         })
 
-        return new OkResponseDescription(representation.metadata, representation.data)
+        let representation2 = await this._store.getRepresentation(delta_identifier, operation.preferences, operation.conditions)
+
+        return new OkResponseDescription(representation2.metadata, representation2.data)
+    }
+
+    private async readStream(stream: Readable): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            let data = '';
+
+            stream.on('data', (chunk: any) => {
+                data += chunk?.toString() ?? '';
+            });
+
+
+            stream.on('end', () => {
+                resolve(data);
+            });
+
+            stream.on('error', (err: Error) => {
+                reject(err);
+            });
+        });
     }
 
     private getDeltaIdentifier(fromIdentifier: ResourceIdentifier): ResourceIdentifier {
