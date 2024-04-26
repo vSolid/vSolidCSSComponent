@@ -1,18 +1,14 @@
-import { BasicRepresentation, ETagHandler, FileDataAccessor, GetOperationHandler, Guarded, HttpRequest, INTERNAL_QUADS, OkResponseDescription, Operation, OperationHandler, OperationHttpHandlerInput, Representation, RepresentationMetadata, ResourceIdentifier, ResourceStore, ResponseDescription, endOfStream, guardStream, readableToQuads, readableToString } from "@solid/community-server"
+import { ETagHandler, GetOperationHandler, Guarded, HttpRequest, OkResponseDescription, Operation, OperationHttpHandlerInput, PostOperationHandler, RepresentationMetadata, ResourceIdentifier, ResourceStore, ResponseDescription, guardStream, readableToString } from "@solid/community-server"
 import { QueryEngine } from '@comunica/query-sparql'
 import { Duplex, Readable } from "stream"
 import { Store, Parser, StreamWriter } from "n3"
-import { Bindings, BindingsStream } from "@comunica/types"
-import arrayifyStream from 'arrayify-stream'
-import { RdfDatasetRepresentation } from "@solid/community-server/dist/http/representation/RdfDatasetRepresentation"
-import { inspect, promisify } from "node:util"
 
-export class ArchiveGetOperationHandler extends GetOperationHandler {
+export class SparQLOperationHandler extends PostOperationHandler {
     private readonly _store: ResourceStore
     private readonly engine
 
-    public constructor(store: ResourceStore, eTagHandler: ETagHandler) {
-        super(store, eTagHandler)
+    public constructor(store: ResourceStore) {
+        super(store)
         this._store = store
         this.engine = new QueryEngine()
     }
@@ -31,17 +27,11 @@ export class ArchiveGetOperationHandler extends GetOperationHandler {
 
         let representation = await this._store.getRepresentation(delta_identifier, operation.preferences, operation.conditions)
 
-        const inputRepresentation: RdfDatasetRepresentation = representation ?
-            representation as RdfDatasetRepresentation :
-            new BasicRepresentation() as RdfDatasetRepresentation
-
         let str = await this.readStream(representation.data)
         const parser = new Parser()
         let existingQuads = parser.parse(str)
         let store = new Store()
         store.addQuads(existingQuads)
-
-        inputRepresentation.dataset = store
 
         const sparql = await readableToString(operation.body.data);
         const quadStream = await this.engine.queryQuads(sparql, { sources: [store], baseIRI: delta_identifier.path })

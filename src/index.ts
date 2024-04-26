@@ -1,3 +1,3 @@
 
 export * from './ArchivingDataAccessorBasedStore'
-export * from './ArchiveGetOperationHandler'
+export * from './SparQLOperationHandler'
