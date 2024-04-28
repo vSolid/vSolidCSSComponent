@@ -31,7 +31,7 @@
       "@type": "WaterfallHandler",
       "handlers": [
         {
-          "@type": "SparQLOperationHandler",
+          "@type": "ArchivingOperationHandler",
           "store": {
             "@id": "urn:solid-server:default:ResourceStore"
           }

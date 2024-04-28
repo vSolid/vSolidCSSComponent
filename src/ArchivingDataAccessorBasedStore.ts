@@ -28,11 +28,12 @@ import {
   parseQuads,
   serializeQuads,
 } from "@solid/community-server";
-import { inspect } from 'util'
 import { DataFactory } from "n3";
-import { Algebra } from 'sparqlalgebrajs';
 import { Quad } from "rdf-js";
+import { Algebra } from 'sparqlalgebrajs';
+import { inspect } from 'util';
 import { v4 as uuid } from 'uuid';
+import { getDeltaIdentifier } from "./utils/deltaIdentifier";
 
 export const VS = {
   operation: "https://vsolid.org/properties#operation",
@@ -78,7 +79,7 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
 
   private async generateDelta(identifier: ResourceIdentifier, patch: SparqlUpdatePatch, conditions?: Conditions): Promise<string> {
     const deltaId = uuid();
-    const deltaIdentifier = this.generateDeltaIdentifier(identifier);
+    const deltaIdentifier = getDeltaIdentifier(identifier);
 
     let existingQuads: Quad[] = [];
     try {
@@ -135,10 +136,6 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
 
   private mapOperationQuadToDeltaQuad(operationQuad: Quad, deltaId: string) {
     return DataFactory.quad(DataFactory.namedNode(deltaId), DataFactory.namedNode(VS.contains_operation), operationQuad);
-  }
-
-  private generateDeltaIdentifier(identifier: ResourceIdentifier): ResourceIdentifier {
-    return { path: identifier.path + ".vSolid" }
   }
 
   private generateDeltaQuadsFromAlgebraUpdate(algebra: Algebra.Update): Quad[] {
