@@ -1,5 +1,5 @@
 import { QueryEngine } from '@comunica/query-sparql';
-import { NotImplementedHttpError, OkResponseDescription, OperationHandlerInput, OperationHttpHandlerInput, PostOperationHandler, RepresentationMetadata, ResourceStore, ResponseDescription, readableToString, serializeQuads } from "@solid/community-server";
+import { NotImplementedHttpError, OkResponseDescription, OperationHandler, OperationHandlerInput, OperationHttpHandlerInput, RepresentationMetadata, ResourceStore, ResponseDescription, readableToString, serializeQuads } from "@solid/community-server";
 import { APPLICATION_SPARQL_VERSION_QUERY } from './utils/ContentTypes';
 import { getDeltaIdentifier } from './utils/DeltaUtil';
 import { readableToQuads } from './utils/QuadUtil';
@@ -7,17 +7,21 @@ import { readableToQuads } from './utils/QuadUtil';
 /**
  * Handles Version Query for archiving.
  */
-export class VersionQueryHandler extends PostOperationHandler {
-    private readonly _store: ResourceStore
+export class VersionQueryHandler extends OperationHandler {
+    protected readonly store: ResourceStore
     private readonly engine
 
     public constructor(store: ResourceStore) {
-        super(store)
-        this._store = store
+        super()
+        this.store = store
         this.engine = new QueryEngine()
     }
 
-    public async canHandle({ request }: OperationHttpHandlerInput): Promise<void> {
+    public async canHandle({ request, operation }: OperationHttpHandlerInput): Promise<void> {
+        if (operation.method !== 'POST') {
+            throw new NotImplementedHttpError('This handler only supports POST operations');
+        }
+
         if (request.headers['content-type'] != APPLICATION_SPARQL_VERSION_QUERY) {
             throw new NotImplementedHttpError('This handler only supports version query operations');
         }
@@ -27,7 +31,7 @@ export class VersionQueryHandler extends PostOperationHandler {
         let currentRepresentationIdentifier = operation.target
         let deltaRepresentationIdentifier = getDeltaIdentifier(currentRepresentationIdentifier)
 
-        let deltaRepresentation = await this._store.getRepresentation(deltaRepresentationIdentifier, operation.preferences, operation.conditions)
+        let deltaRepresentation = await this.store.getRepresentation(deltaRepresentationIdentifier, operation.preferences, operation.conditions)
         let deltaStore = await readableToQuads(deltaRepresentation.data)
 
         const sparql = await readableToString(operation.body.data)

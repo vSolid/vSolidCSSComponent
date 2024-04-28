@@ -1,4 +1,4 @@
-import { NotImplementedHttpError, OkResponseDescription, OperationHttpHandlerInput, PostOperationHandler, Representation, RepresentationMetadata, ResourceStore, ResponseDescription, endOfStream, serializeQuads } from "@solid/community-server";
+import { NotImplementedHttpError, OkResponseDescription, OperationHandler, OperationHttpHandlerInput, Representation, RepresentationMetadata, ResourceStore, ResponseDescription, endOfStream, serializeQuads } from "@solid/community-server";
 import { DataFactory, Quad, Store } from "n3";
 import rdfParser from 'rdf-parse';
 import { APPLICATION_SPARQL_VERSION_MATERIALIZATION } from "./utils/ContentTypes";
@@ -10,15 +10,19 @@ import { VS } from "./utils/VS";
 /**
  * Handles Version Materialization for archiving.
  */
-export class VersionMaterializationHandler extends PostOperationHandler {
-    private readonly _store: ResourceStore
+export class VersionMaterializationHandler extends OperationHandler {
+    private readonly store: ResourceStore
 
     public constructor(store: ResourceStore) {
-        super(store)
-        this._store = store
+        super()
+        this.store = store
     }
 
-    public async canHandle({ request }: OperationHttpHandlerInput): Promise<void> {
+    public async canHandle({ request, operation }: OperationHttpHandlerInput): Promise<void> {
+        if (operation.method !== 'POST') {
+            throw new NotImplementedHttpError('This handler only supports POST operations');
+        }
+
         if (request.headers['content-type'] != APPLICATION_SPARQL_VERSION_MATERIALIZATION) {
             throw new NotImplementedHttpError('This handler only supports version materialization operations');
         }
@@ -30,8 +34,8 @@ export class VersionMaterializationHandler extends PostOperationHandler {
         let currentRepresentationIdentifier = operation.target
         let deltaRepresentationIdentifier = getDeltaIdentifier(currentRepresentationIdentifier)
 
-        let currentRepresentation = await this._store.getRepresentation(currentRepresentationIdentifier, {})
-        let deltaRepresentation = await this._store.getRepresentation(deltaRepresentationIdentifier, {})
+        let currentRepresentation = await this.store.getRepresentation(currentRepresentationIdentifier, {})
+        let deltaRepresentation = await this.store.getRepresentation(deltaRepresentationIdentifier, {})
 
         let materializedQuads = await this.materialize(currentRepresentation, deltaRepresentation, currentRepresentationIdentifier.path, materializedID)
 
