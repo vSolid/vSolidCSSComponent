@@ -31,10 +31,22 @@
       "@type": "WaterfallHandler",
       "handlers": [
         {
-          "@type": "ArchivingOperationHandler",
-          "store": {
-            "@id": "urn:solid-server:default:ResourceStore"
-          }
+          "@id": "urn:solid-server:default:ArchivingOperationHandler",
+          "@type": "WaterfallHandler",
+          "handlers": [
+            {
+              "@type": "VersionQueryHandler",
+              "store": {
+                "@id": "urn:solid-server:default:ResourceStore"
+              }
+            },
+            {
+              "@type": "VersionMaterializationHandler",
+              "store": {
+                "@id": "urn:solid-server:default:ResourceStore"
+              }
+            }
+          ]
         },
         {
           "@type": "GetOperationHandler",

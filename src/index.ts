@@ -1,3 +1,5 @@
 
-export * from './ArchivingDataAccessorBasedStore'
-export * from './ArchivingOperationHandler'
+export * from "./ArchivingDataAccessorBasedStore"
+export * from "./VersionMaterializationHandler"
+export * from "./VersionQueryHandler"
+
