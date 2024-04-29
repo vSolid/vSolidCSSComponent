@@ -1,11 +1,10 @@
-import { Thing, getPropertyAll, removeThing, saveSolidDatasetAt, setStringNoLocale, setThing, isContainer } from "@inrupt/solid-client";
+import { Thing, getPropertyAll, removeThing, saveSolidDatasetAt, setStringNoLocale, setThing } from "@inrupt/solid-client";
 import { fetch } from "@inrupt/solid-client-authn-browser";
+import React, { useState } from "react";
 import { useResource } from "../../contexts/resource";
 import { useUrl } from "../../contexts/url";
 import { useDataset } from "../../hooks/dataset";
 import PredicateViewer from "./PredicateViewer";
-import { FormEventHandler, useState } from "react";
-import React from "react";
 
 interface Props {
     thing: Thing
@@ -57,13 +56,13 @@ function ThingViewer({ thing }: Props) {
                 <form onSubmit={editThing}>
                     {React.Children.toArray(Object.keys(thing.predicates).map(predicate => (<>
                         <input type="text" defaultValue={predicate} name={predicate} />
-                        <input type="text" defaultValue={thing.predicates[predicate]?.literals?.["http://www.w3.org/2001/XMLSchema#string"] ?? ""} name={`${predicate}_value`}/>
+                        <input type="text" defaultValue={thing.predicates[predicate]?.literals?.["http://www.w3.org/2001/XMLSchema#string"] ?? ""} name={`${predicate}_value`} />
                     </>)))}
                     <button type="submit">Save</button>
                 </form>
             </div>
         )}
-        </>)
+    </>)
 }
 
 export default ThingViewer

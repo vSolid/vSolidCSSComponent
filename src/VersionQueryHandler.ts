@@ -39,6 +39,6 @@ export class VersionQueryHandler extends OperationHandler {
 
         const deltaQuads = await deltaQuadStream.toArray()
 
-        return new OkResponseDescription(new RepresentationMetadata(), serializeQuads(deltaQuads))
+        return new OkResponseDescription(new RepresentationMetadata("text/turtle"), serializeQuads(deltaQuads))
     }
 }
