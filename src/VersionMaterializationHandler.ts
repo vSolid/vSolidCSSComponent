@@ -19,7 +19,7 @@ export class VersionMaterializationHandler extends OperationHandler {
     }
 
     public async canHandle({ request, operation }: OperationHttpHandlerInput): Promise<void> {
-        if (operation.method !== 'POST') {
+        if (operation.method !== 'GET') {
             throw new NotImplementedHttpError('This handler only supports POST operations');
         }
 
@@ -39,7 +39,7 @@ export class VersionMaterializationHandler extends OperationHandler {
 
         let materializedQuads = await this.materialize(currentRepresentation, deltaRepresentation, currentRepresentationIdentifier.path, materializedID)
 
-        return new OkResponseDescription(new RepresentationMetadata(), serializeQuads(materializedQuads))
+        return new OkResponseDescription(new RepresentationMetadata("text/turtle"), serializeQuads(materializedQuads))
     }
 
     async materialize(currentRepresentation: Representation, deltaRepresentation: Representation, currentRepresentationIdentifier: string, materializedID: string): Promise<Quad[]> {

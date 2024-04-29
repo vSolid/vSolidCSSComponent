@@ -14,6 +14,7 @@
   <DeltaId2, vs:next_delta, DeltaId2>
 */
 
+import type { Quad } from '@rdfjs/types';
 import {
   AuxiliaryStrategy,
   Conditions,
@@ -29,9 +30,7 @@ import {
   serializeQuads,
 } from "@solid/community-server";
 import { DataFactory } from "n3";
-import { Quad } from "rdf-js";
 import { Algebra } from 'sparqlalgebrajs';
-import { inspect } from 'util';
 import { v4 as uuid } from 'uuid';
 import { getDeltaIdentifier } from "./utils/DeltaUtil";
 import { VS } from "./utils/VS";
@@ -56,10 +55,11 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
     conditions?: Conditions | undefined,
   ): Promise<never> {
     if (this.isSparqlUpdate(patch)) {
-      const sparqlupdatepatch = (patch as SparqlUpdatePatch)
-      this.logger.warn("Patch path: " + identifier.path);
-      const deltaId = await this.generateDelta(identifier, sparqlupdatepatch);
-      patch.metadata.set(DataFactory.namedNode(VS.next_delta), deltaId);
+      const sparqlPatch = (patch as SparqlUpdatePatch)
+      const deltaID = await this.generateDelta(identifier, sparqlPatch);
+
+      patch.metadata.set(DataFactory.namedNode(VS.next_delta), deltaID);
+
       this.dataaccessor.writeMetadata(identifier, patch.metadata);
     }
 
@@ -67,40 +67,34 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
   }
 
   private async generateDelta(identifier: ResourceIdentifier, patch: SparqlUpdatePatch, conditions?: Conditions): Promise<string> {
-    const deltaId = uuid();
-    const deltaIdentifier = getDeltaIdentifier(identifier);
+    const deltaID = uuid();
+    const deltaResourceIdentifier = getDeltaIdentifier(identifier);
 
-    let existingQuads: Quad[] = [];
-    try {
-      const existingDeltaDataStream = await this.dataaccessor.getData(deltaIdentifier)
-      existingQuads = await parseQuads(existingDeltaDataStream)
-    } catch (error) {
-      this.printObject(error, "error");
-    }
+    let existingQuads = await this.existingDeltaQuads(deltaResourceIdentifier)
 
     const existingMetadataStream = await this.dataaccessor.getMetadata(identifier)
 
-    const headDeltaId = existingMetadataStream.get(DataFactory.namedNode(VS.next_delta));
+    const headDeltaID = existingMetadataStream.get(DataFactory.namedNode(VS.next_delta));
 
-    const operationQuads = this.generateDeltaQuadsFromAlgebraUpdate(patch.algebra);
+    const changeOperations = this.generateDeltaQuadsFromAlgebraUpdate(patch.algebra);
 
     // map operation quads to delta quads
     const deltaDateQuad = DataFactory.quad(
-      DataFactory.namedNode(deltaId),
+      DataFactory.namedNode(deltaID),
       DataFactory.namedNode(VS.delta_date),
       DataFactory.literal((new Date()).toISOString())
     );
     const nextDeltaQuad = DataFactory.quad(
-      DataFactory.namedNode(deltaId),
+      DataFactory.namedNode(deltaID),
       DataFactory.namedNode(VS.next_delta),
-      headDeltaId?.value
-        ? DataFactory.namedNode(headDeltaId.value)
+      headDeltaID?.value
+        ? DataFactory.namedNode(headDeltaID.value)
         : DataFactory.blankNode()
     );
 
     const allQuadsToWrite = [
       ...existingQuads,
-      ...operationQuads?.map(q => this.mapOperationQuadToDeltaQuad(q, deltaId)),
+      ...changeOperations?.map(operation => this.mapOperationQuadToDeltaQuad(operation, deltaID)),
       deltaDateQuad,
       nextDeltaQuad
     ];
@@ -113,14 +107,23 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
     };
 
     await this.writeData(
-      deltaIdentifier,      // identifier
-      newPatch,             // representation
-      false,                // isContainer
-      true,                 // createContainers
-      true                  // exists
+      deltaResourceIdentifier,   // identifier
+      newPatch,                  // representation
+      false,                     // isContainer
+      true,                      // createContainers
+      true                       // exists
     );
 
-    return deltaId;
+    return deltaID;
+  }
+
+  private async existingDeltaQuads(deltaResourceIdentifier: ResourceIdentifier): Promise<Quad[]> {
+    const existingDeltaDataStream = await this.dataaccessor.getData(deltaResourceIdentifier)
+    let existingDeltas = await parseQuads(existingDeltaDataStream)
+    if (!existingDeltas) {
+      throw new Error("Could not read existing deltas")
+    }
+    return existingDeltas
   }
 
   private mapOperationQuadToDeltaQuad(operationQuad: Quad, deltaId: string) {
@@ -148,10 +151,6 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
     const copyQuad = DataFactory.quad(quad.subject, quad.predicate, quad.object);
     const operationQuad = DataFactory.quad(copyQuad, DataFactory.namedNode(VS.operation), DataFactory.namedNode(VS[operation]));
     return operationQuad;
-  }
-
-  private printObject<T>(object: T, consoleType: "info" | "warn" | "error" = "info", depth: number = 10) {
-    this.logger[consoleType](inspect(object, undefined, depth))
   }
 
   private isSparqlUpdate(patch: Patch): patch is SparqlUpdatePatch {

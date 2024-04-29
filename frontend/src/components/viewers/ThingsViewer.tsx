@@ -1,4 +1,4 @@
-import { buildThing, createThing, getThing, isContainer, saveSolidDatasetAt, setThing } from "@inrupt/solid-client";
+import { Thing, buildThing, createThing, getThing, isContainer, saveSolidDatasetAt, setThing } from "@inrupt/solid-client";
 import { fetch } from "@inrupt/solid-client-authn-browser";
 import { FormEvent, useRef, useState } from "react";
 import { useResource } from "../../contexts/resource";
@@ -8,8 +8,11 @@ import { useThings } from "../../hooks/things";
 import FieldSet from "../ui/FieldSet";
 import ThingViewer from "./ThingViewer";
 
-function ThingsViewer() {
-    const things = useThings()
+function ThingsViewer({ things }: { things: Thing[] | undefined }) {
+    if (!things) {
+        things = useThings()
+    }
+
     const { fetchResource } = useResource()
     const dataset = useDataset()
     const { url } = useUrl()
@@ -32,8 +35,8 @@ function ThingsViewer() {
         }
 
         const thingUrl = isContainer(dataset) ? url + subject : url + "#" + subject
-        const thing = getThing(dataset, thingUrl) ?? createThing({name: subject })
-        
+        const thing = getThing(dataset, thingUrl) ?? createThing({ name: subject })
+
         const newThing = buildThing(thing)
             .addStringNoLocale(predicate, object)
             .build()
