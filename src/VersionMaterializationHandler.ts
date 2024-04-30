@@ -60,7 +60,7 @@ export class VersionMaterializationHandler extends OperationHandler {
 
         const deltaStore = await readableToQuads(deltaRepresentation.data)
 
-        while (nextDelta && nextDelta != archiveID) {
+        while (nextDelta) {
             let operations = this.operations(deltaStore, nextDelta)
             operations.forEach(quad => {
                 const operation = (quad.object as unknown) as Quad
@@ -74,6 +74,10 @@ export class VersionMaterializationHandler extends OperationHandler {
                         break
                 }
             })
+
+            if (nextDelta == archiveID) {
+                break
+            }
 
             nextDelta = this.nextDelta(deltaStore, nextDelta)?.object.value
         }
