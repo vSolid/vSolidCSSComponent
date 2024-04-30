@@ -1,5 +1,5 @@
 import { QueryEngine } from '@comunica/query-sparql';
-import { NotImplementedHttpError, OkResponseDescription, OperationHandler, OperationHandlerInput, OperationHttpHandlerInput, RepresentationMetadata, ResourceStore, ResponseDescription, readableToString, serializeQuads } from "@solid/community-server";
+import { NotImplementedHttpError, OkResponseDescription, OperationHandler, OperationHandlerInput, OperationHttpHandlerInput, RepresentationMetadata, ResourceStore, ResponseDescription, TEXT_TURTLE, readableToString, serializeQuads } from "@solid/community-server";
 import { APPLICATION_SPARQL_VERSION_QUERY } from './utils/ContentTypes';
 import { getDeltaIdentifier } from './utils/DeltaUtil';
 import { readableToQuads } from './utils/QuadUtil';
@@ -39,6 +39,6 @@ export class VersionQueryHandler extends OperationHandler {
 
         const deltaQuads = await deltaQuadStream.toArray()
 
-        return new OkResponseDescription(new RepresentationMetadata("text/turtle"), serializeQuads(deltaQuads))
+        return new OkResponseDescription(new RepresentationMetadata(TEXT_TURTLE), serializeQuads(deltaQuads))
     }
 }
