@@ -119,7 +119,7 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
   private async existingDeltaQuads(deltaResourceIdentifier: ResourceIdentifier): Promise<Quad[]> {
     try {
       const existingDeltaDataStream = await this.dataaccessor.getData(deltaResourceIdentifier)
-      let existingDeltas = await parseQuads(existingDeltaDataStream)
+      const existingDeltas = await parseQuads(existingDeltaDataStream)
       if (!existingDeltas) {
         throw new Error("Could not read existing deltas")
       }

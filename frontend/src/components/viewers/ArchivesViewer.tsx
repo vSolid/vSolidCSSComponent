@@ -8,15 +8,13 @@ import { ArchiveViewer } from "./ArchiveViewer";
 export function ArchivesViewer() {
     const { isContainer } = useContainer()
 
-    if (isContainer) return <></>
-
     const { url } = useUrl()
     const [archives, setArchives] = useState<Quad[]>([])
 
     async function versionQuery() {
         if (!url) return
 
-        let response = await fetch(url, {
+        const response = await fetch(url, {
             headers: {
                 "Content-Type": "application/version-query"
             },
@@ -24,9 +22,9 @@ export function ArchivesViewer() {
         })
 
         if (response.ok) {
-            let body = await response.text()
+            const body = await response.text()
             const parser = new Parser()
-            let quads = parser.parse(body)
+            const quads = parser.parse(body)
             setArchives(quads)
         }
     }
@@ -34,6 +32,8 @@ export function ArchivesViewer() {
     useEffect(() => {
         versionQuery()
     }, [url])
+
+    if (isContainer) return <></>
 
     return (
         <FieldSet header="Archives:" >

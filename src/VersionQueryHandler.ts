@@ -34,7 +34,7 @@ export class VersionQueryHandler extends OperationHandler {
         const deltaRepresentation = await this.store.getRepresentation(deltaRepresentationIdentifier, operation.preferences, operation.conditions)
         const deltaStore = await readableToQuads(deltaRepresentation.data)
 
-        let sparql = "PREFIX vso: <https://vsolid.org/properties#> CONSTRUCT {?s vso:delta_date ?date .} WHERE {?s vso:delta_date ?date . ?s vso:next_delta ?next_deta . FILTER (!isBlank(?next_deta)) }"
+        const sparql = "PREFIX vso: <https://vsolid.org/properties#> CONSTRUCT {?s vso:delta_date ?date .} WHERE {?s vso:delta_date ?date . ?s vso:next_delta ?next_deta . FILTER (!isBlank(?next_deta)) }"
         const deltaQuadStream = await this.engine.queryQuads(sparql, { sources: [deltaStore], baseIRI: deltaRepresentationIdentifier.path })
 
         const deltaQuads = await deltaQuadStream.toArray()

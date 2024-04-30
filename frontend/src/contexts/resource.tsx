@@ -27,7 +27,7 @@ export function ResourceProvider({ children }: { children: ReactNode }) {
 
     async function fetchResource() {
         if (!url) return
-        let response = await fetch(url)
+        const response = await fetch(url)
         if ((response.status === 404 || response.status === 403) && !url.endsWith('/')) {
             navigate(`/explore/?url=${encodeURIComponent(url + '/')}`)
             return

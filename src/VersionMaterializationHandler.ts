@@ -29,7 +29,7 @@ export class VersionMaterializationHandler extends OperationHandler {
     }
 
     public async handle({ request, operation }: OperationHttpHandlerInput): Promise<ResponseDescription> {
-        let archiveID = getQueryParameter(request.url, "delta_id")
+        const archiveID = getQueryParameter(request.url, "delta_id")
 
         const currentRepresentationIdentifier = operation.target
         const deltaRepresentationIdentifier = getDeltaIdentifier(currentRepresentationIdentifier)
@@ -37,7 +37,7 @@ export class VersionMaterializationHandler extends OperationHandler {
         const currentRepresentation = await this.store.getRepresentation(currentRepresentationIdentifier, {})
         const deltaRepresentation = await this.store.getRepresentation(deltaRepresentationIdentifier, {})
 
-        let materializedQuads = await this.materialize(currentRepresentation, deltaRepresentation, archiveID)
+        const materializedQuads = await this.materialize(currentRepresentation, deltaRepresentation, archiveID)
 
         return new OkResponseDescription(new RepresentationMetadata(TEXT_TURTLE), serializeQuads(materializedQuads))
     }
@@ -61,7 +61,7 @@ export class VersionMaterializationHandler extends OperationHandler {
         const deltaStore = await readableToQuads(deltaRepresentation.data)
 
         while (nextDelta) {
-            let operations = this.operations(deltaStore, nextDelta)
+            const operations = this.operations(deltaStore, nextDelta)
             operations.forEach(quad => {
                 const operation = (quad.object as unknown) as Quad
                 const change = (operation.subject as unknown) as Quad
