@@ -20,8 +20,7 @@ export function ArchivesViewer() {
             headers: {
                 "Content-Type": "application/sparql-version-query"
             },
-            method: "POST",
-            body: "PREFIX vso: <https://vsolid.org/properties#>CONSTRUCT {?s vso:delta_date ?date .}WHERE {?s vso:delta_date ?date}"
+            method: "GET"
         })
 
         if (response.ok) {

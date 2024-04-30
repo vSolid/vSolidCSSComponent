@@ -1,5 +1,5 @@
 import { QueryEngine } from '@comunica/query-sparql';
-import { NotImplementedHttpError, OkResponseDescription, OperationHandler, OperationHandlerInput, OperationHttpHandlerInput, RepresentationMetadata, ResourceStore, ResponseDescription, TEXT_TURTLE, readableToString, serializeQuads } from "@solid/community-server";
+import { NotImplementedHttpError, OkResponseDescription, OperationHandler, OperationHandlerInput, OperationHttpHandlerInput, RepresentationMetadata, ResourceStore, ResponseDescription, TEXT_TURTLE, serializeQuads } from "@solid/community-server";
 import { APPLICATION_SPARQL_VERSION_QUERY } from './utils/ContentTypes';
 import { getDeltaIdentifier } from './utils/DeltaUtil';
 import { readableToQuads } from './utils/QuadUtil';
@@ -18,7 +18,7 @@ export class VersionQueryHandler extends OperationHandler {
     }
 
     public async canHandle({ request, operation }: OperationHttpHandlerInput): Promise<void> {
-        if (operation.method !== 'POST') {
+        if (operation.method !== 'GET') {
             throw new NotImplementedHttpError('This handler only supports POST operations');
         }
 
@@ -28,13 +28,13 @@ export class VersionQueryHandler extends OperationHandler {
     }
 
     public async handle({ operation }: OperationHandlerInput): Promise<ResponseDescription> {
-        let currentRepresentationIdentifier = operation.target
-        let deltaRepresentationIdentifier = getDeltaIdentifier(currentRepresentationIdentifier)
+        const currentRepresentationIdentifier = operation.target
+        const deltaRepresentationIdentifier = getDeltaIdentifier(currentRepresentationIdentifier)
 
-        let deltaRepresentation = await this.store.getRepresentation(deltaRepresentationIdentifier, operation.preferences, operation.conditions)
-        let deltaStore = await readableToQuads(deltaRepresentation.data)
+        const deltaRepresentation = await this.store.getRepresentation(deltaRepresentationIdentifier, operation.preferences, operation.conditions)
+        const deltaStore = await readableToQuads(deltaRepresentation.data)
 
-        const sparql = await readableToString(operation.body.data)
+        let sparql = "PREFIX vso: <https://vsolid.org/properties#>CONSTRUCT {?s vso:delta_date ?date .}WHERE {?s vso:delta_date ?date}"
         const deltaQuadStream = await this.engine.queryQuads(sparql, { sources: [deltaStore], baseIRI: deltaRepresentationIdentifier.path })
 
         const deltaQuads = await deltaQuadStream.toArray()

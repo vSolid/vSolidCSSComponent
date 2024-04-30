@@ -8,9 +8,11 @@ import PredicateViewer from "./PredicateViewer";
 
 interface Props {
     thing: Thing
+    disableEditing?: boolean
+    disableDeleting?: boolean
 }
 
-function ThingViewer({ thing }: Props) {
+function ThingViewer({ thing, disableEditing, disableDeleting }: Props) {
     const predicates = getPropertyAll(thing).map((predicate, key) => <PredicateViewer key={key} thing={thing} predicate={predicate} />)
     const [editVisible, setEditVisible] = useState(false);
     const toggleEditVisible = () => setEditVisible(!editVisible);
@@ -48,7 +50,7 @@ function ThingViewer({ thing }: Props) {
 
     return (<>
         <details>
-            <summary>{thing.url} <a href="#" onClick={toggleEditVisible}>edit</a> <a href="#" onClick={deleteThing}>delete</a></summary>
+            <summary>{thing.url} {!disableEditing && <a href="#" onClick={toggleEditVisible}>edit</a>} {!disableDeleting && <a href="#" onClick={deleteThing}>delete</a>}</summary>
             {predicates}
         </details>
         {editVisible && (

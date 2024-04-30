@@ -8,10 +8,17 @@ import { useThings } from "../../hooks/things";
 import FieldSet from "../ui/FieldSet";
 import ThingViewer from "./ThingViewer";
 
-function ThingsViewer({ things }: { things: Thing[] | undefined }) {
-    if (!things) {
-        things = useThings()
-    }
+type ThingsViewerProps = {
+    things?: Thing[]
+    disableEditing?: boolean
+    disableDeleting?: boolean
+    hideAddThingButton?: boolean
+}
+
+function ThingsViewer({ things: _things, hideAddThingButton, ...props }: ThingsViewerProps) {
+
+    const hookThings = useThings()
+    const things = _things ?? hookThings
 
     const { fetchResource } = useResource()
     const dataset = useDataset()
@@ -56,9 +63,16 @@ function ThingsViewer({ things }: { things: Thing[] | undefined }) {
     return (
         <>
             <FieldSet header="Things:">
-                {things.map((thing, i) => <ThingViewer key={i} thing={thing} />)}
+                {things.map((thing, i) => <ThingViewer key={i} thing={thing} {...props} />)}
 
-                <button className="mt-2" onClick={() => setShowThingEditor(!showThingEditor)}>Add Thing</button>
+                {!hideAddThingButton && (
+                    <button 
+                        className="mt-2" 
+                        onClick={() => setShowThingEditor(!showThingEditor)}
+                    >
+                        Add Thing
+                    </button>
+                )}
                 {showThingEditor && (
                     <form className="mt-2 flex gap-2" onSubmit={addThing}>
                         <span>
