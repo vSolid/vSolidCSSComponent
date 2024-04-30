@@ -18,10 +18,9 @@ export function ArchivesViewer() {
 
         let response = await fetch(url, {
             headers: {
-                "Content-Type": "application/sparql-version-query"
+                "Content-Type": "application/version-query"
             },
-            method: "POST",
-            body: "PREFIX vso: <https://vsolid.org/properties#>CONSTRUCT {?s vso:delta_date ?date .}WHERE {?s vso:delta_date ?date}"
+            method: "GET"
         })
 
         if (response.ok) {

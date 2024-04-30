@@ -1,4 +1,4 @@
-import { NotImplementedHttpError, OkResponseDescription, OperationHandler, OperationHttpHandlerInput, Representation, RepresentationMetadata, ResourceStore, ResponseDescription, endOfStream, serializeQuads } from "@solid/community-server";
+import { NotImplementedHttpError, OkResponseDescription, OperationHandler, OperationHttpHandlerInput, Representation, RepresentationMetadata, ResourceStore, ResponseDescription, TEXT_TURTLE, endOfStream, serializeQuads } from "@solid/community-server";
 import { DataFactory, Quad, Store } from "n3";
 import rdfParser from 'rdf-parse';
 import { APPLICATION_SPARQL_VERSION_MATERIALIZATION } from "./utils/ContentTypes";
@@ -29,7 +29,7 @@ export class VersionMaterializationHandler extends OperationHandler {
     }
 
     public async handle({ request, operation }: OperationHttpHandlerInput): Promise<ResponseDescription> {
-        const materializedID = getQueryParameter(request.url, "delta_id")
+        let archiveID = getQueryParameter(request.url, "delta_id")
 
         const currentRepresentationIdentifier = operation.target
         const deltaRepresentationIdentifier = getDeltaIdentifier(currentRepresentationIdentifier)
@@ -37,13 +37,13 @@ export class VersionMaterializationHandler extends OperationHandler {
         const currentRepresentation = await this.store.getRepresentation(currentRepresentationIdentifier, {})
         const deltaRepresentation = await this.store.getRepresentation(deltaRepresentationIdentifier, {})
 
-        const materializedQuads = await this.materialize(currentRepresentation, deltaRepresentation, currentRepresentationIdentifier.path, materializedID)
+        let materializedQuads = await this.materialize(currentRepresentation, deltaRepresentation, archiveID)
 
-        return new OkResponseDescription(new RepresentationMetadata("text/turtle"), serializeQuads(materializedQuads))
+        return new OkResponseDescription(new RepresentationMetadata(TEXT_TURTLE), serializeQuads(materializedQuads))
     }
 
-    async materialize(currentRepresentation: Representation, deltaRepresentation: Representation, currentRepresentationIdentifier: string, materializedID: string): Promise<Quad[]> {
-        let nextDelta = currentRepresentation.metadata.get(DataFactory.namedNode(VS.next_delta))?.value
+    async materialize(currentRepresentation: Representation, deltaRepresentation: Representation, archiveID: string): Promise<Quad[]> {
+        var nextDelta = currentRepresentation.metadata.get(DataFactory.namedNode(VS.next_delta))?.value
 
         if (!nextDelta) {
             throw new Error("No deltas have been saved for this resource.")
@@ -51,7 +51,7 @@ export class VersionMaterializationHandler extends OperationHandler {
 
         const rawQuads = rdfParser.parse(currentRepresentation.data, {
             contentType: currentRepresentation.metadata.contentType!,
-            baseIRI: currentRepresentationIdentifier
+            baseIRI: currentRepresentation.metadata.identifier.value
         })
 
         const materializedStore = new Store();
@@ -60,8 +60,8 @@ export class VersionMaterializationHandler extends OperationHandler {
 
         const deltaStore = await readableToQuads(deltaRepresentation.data)
 
-        while (nextDelta && nextDelta != materializedID) {
-            const operations = this.operations(deltaStore, nextDelta)
+        while (nextDelta && nextDelta != archiveID) {
+            let operations = this.operations(deltaStore, nextDelta)
             operations.forEach(quad => {
                 const operation = (quad.object as unknown) as Quad
                 const change = (operation.subject as unknown) as Quad
