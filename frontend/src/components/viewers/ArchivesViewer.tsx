@@ -18,7 +18,7 @@ export function ArchivesViewer() {
 
         let response = await fetch(url, {
             headers: {
-                "Content-Type": "application/sparql-version-query"
+                "Content-Type": "application/version-query"
             },
             method: "GET"
         })
