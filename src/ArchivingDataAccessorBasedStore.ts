@@ -69,8 +69,7 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
   private async generateDelta(identifier: ResourceIdentifier, patch: SparqlUpdatePatch, conditions?: Conditions): Promise<string> {
     const deltaID = uuid();
     const deltaResourceIdentifier = getDeltaIdentifier(identifier);
-
-    let existingQuads = await this.existingDeltaQuads(deltaResourceIdentifier)
+    const existingQuads = await this.existingDeltaQuads(deltaResourceIdentifier)
 
     const existingMetadataStream = await this.dataaccessor.getMetadata(identifier)
 
@@ -118,12 +117,16 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
   }
 
   private async existingDeltaQuads(deltaResourceIdentifier: ResourceIdentifier): Promise<Quad[]> {
-    const existingDeltaDataStream = await this.dataaccessor.getData(deltaResourceIdentifier)
-    let existingDeltas = await parseQuads(existingDeltaDataStream)
-    if (!existingDeltas) {
-      throw new Error("Could not read existing deltas")
+    try {
+      const existingDeltaDataStream = await this.dataaccessor.getData(deltaResourceIdentifier)
+      let existingDeltas = await parseQuads(existingDeltaDataStream)
+      if (!existingDeltas) {
+        throw new Error("Could not read existing deltas")
+      }
+      return existingDeltas
+    } catch (error) {
+      return [];
     }
-    return existingDeltas
   }
 
   private mapOperationQuadToDeltaQuad(operationQuad: Quad, deltaId: string) {

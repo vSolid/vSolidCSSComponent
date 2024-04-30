@@ -29,21 +29,21 @@ export class VersionMaterializationHandler extends OperationHandler {
     }
 
     public async handle({ request, operation }: OperationHttpHandlerInput): Promise<ResponseDescription> {
-        let materializedID = getQueryParameter(request.url, "delta_id")
+        const materializedID = getQueryParameter(request.url, "delta_id")
 
-        let currentRepresentationIdentifier = operation.target
-        let deltaRepresentationIdentifier = getDeltaIdentifier(currentRepresentationIdentifier)
+        const currentRepresentationIdentifier = operation.target
+        const deltaRepresentationIdentifier = getDeltaIdentifier(currentRepresentationIdentifier)
 
-        let currentRepresentation = await this.store.getRepresentation(currentRepresentationIdentifier, {})
-        let deltaRepresentation = await this.store.getRepresentation(deltaRepresentationIdentifier, {})
+        const currentRepresentation = await this.store.getRepresentation(currentRepresentationIdentifier, {})
+        const deltaRepresentation = await this.store.getRepresentation(deltaRepresentationIdentifier, {})
 
-        let materializedQuads = await this.materialize(currentRepresentation, deltaRepresentation, currentRepresentationIdentifier.path, materializedID)
+        const materializedQuads = await this.materialize(currentRepresentation, deltaRepresentation, currentRepresentationIdentifier.path, materializedID)
 
         return new OkResponseDescription(new RepresentationMetadata("text/turtle"), serializeQuads(materializedQuads))
     }
 
     async materialize(currentRepresentation: Representation, deltaRepresentation: Representation, currentRepresentationIdentifier: string, materializedID: string): Promise<Quad[]> {
-        var nextDelta = currentRepresentation.metadata.get(DataFactory.namedNode(VS.next_delta))?.value
+        let nextDelta = currentRepresentation.metadata.get(DataFactory.namedNode(VS.next_delta))?.value
 
         if (!nextDelta) {
             throw new Error("No deltas have been saved for this resource.")
@@ -58,13 +58,13 @@ export class VersionMaterializationHandler extends OperationHandler {
         materializedStore.import(rawQuads);
         await endOfStream(rawQuads);
 
-        let deltaStore = await readableToQuads(deltaRepresentation.data)
+        const deltaStore = await readableToQuads(deltaRepresentation.data)
 
         while (nextDelta && nextDelta != materializedID) {
-            let operations = this.operations(deltaStore, nextDelta)
+            const operations = this.operations(deltaStore, nextDelta)
             operations.forEach(quad => {
-                let operation = (quad.object as unknown) as Quad
-                let change = (operation.subject as unknown) as Quad
+                const operation = (quad.object as unknown) as Quad
+                const change = (operation.subject as unknown) as Quad
                 switch (operation.object.value) {
                     case VS.insert:
                         materializedStore.removeQuad(change.subject, change.predicate, change.object)

@@ -28,11 +28,11 @@ export class VersionQueryHandler extends OperationHandler {
     }
 
     public async handle({ operation }: OperationHandlerInput): Promise<ResponseDescription> {
-        let currentRepresentationIdentifier = operation.target
-        let deltaRepresentationIdentifier = getDeltaIdentifier(currentRepresentationIdentifier)
+        const currentRepresentationIdentifier = operation.target
+        const deltaRepresentationIdentifier = getDeltaIdentifier(currentRepresentationIdentifier)
 
-        let deltaRepresentation = await this.store.getRepresentation(deltaRepresentationIdentifier, operation.preferences, operation.conditions)
-        let deltaStore = await readableToQuads(deltaRepresentation.data)
+        const deltaRepresentation = await this.store.getRepresentation(deltaRepresentationIdentifier, operation.preferences, operation.conditions)
+        const deltaStore = await readableToQuads(deltaRepresentation.data)
 
         const sparql = await readableToString(operation.body.data)
         const deltaQuadStream = await this.engine.queryQuads(sparql, { sources: [deltaStore], baseIRI: deltaRepresentationIdentifier.path })
