@@ -26,7 +26,7 @@ export function ArchiveViewer({ archiveID, date }: { archiveID: string, date: Da
         <details onClick={fetchArchive}>
             <summary>{date.toLocaleString()} ({archiveID})</summary>
             {dataset ? (
-                <ThingsViewer things={getThingAll(dataset)} />
+                <ThingsViewer things={getThingAll(dataset)} disableDeleting disableEditing hideAddThingButton />
             ) : (
                 <p>Loading...</p>
             )}
