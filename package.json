@@ -16,13 +16,15 @@
     "https://linkedsoftwaredependencies.org/bundles/npm/vsolid/^1.0.0/dist/": "dist/"
   },
   "scripts": {
-    "start": "npm run build && community-solid-server -c config.json -f .data -m .",
+    "start": "npm run build && community-solid-server -c config_file.json -f .data -m .",
+    "start:memory": "npm run build && community-solid-server -c config_memory.json -f .data -m .",
     "standard": "npm run build && community-solid-server -c standard_config.json -f .data -m .",
     "build": "npm run build:ts && npm run build:components",
     "build:components": "componentsjs-generator -s src -c dist/components -i .componentsignore -r vsolid",
     "build:ts": "tsc",
     "prepare": "npm run build",
-    "test": "jest"
+    "test": "jest",
+    "bench": "cd ./benny && tsc && node ./dist/runner.js"
   },
   "files": [
     "dist",
@@ -30,13 +32,18 @@
   ],
   "dependencies": {
     "@solid/community-server": "^7.0.5",
+    "benchmark": "^2.1.4",
+    "g": "^2.0.1",
     "node": "^20.12.2",
-    "penny-pod-inspector": "^0.1024692321.5216227821"
+    "penny-pod-inspector": "^0.1024692321.5216227821",
+    "solidbench": "^1.7.1"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.2",
+    "@types/benchmark": "^2.1.5",
     "@types/jest": "^29.5.12",
     "@types/uuid": "^9.0.8",
+    "benny": "^3.7.1",
     "componentsjs-generator": "^3.1.2",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.2",

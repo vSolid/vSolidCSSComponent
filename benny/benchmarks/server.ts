@@ -1,14 +1,29 @@
 import { App, AppRunner, joinFilePath } from '@solid/community-server';
 
-describe('My Server', (): void => {
-  let app: App;
+export type ConfigTemplate = "standard" | "vSolid";
 
-  beforeAll(async(): Promise<void> => {
-    // This creates an App, which can be used to start (and stop) a CSS instance
-    app = await new AppRunner().create(
+export class Server {
+  public app : App | null = null;
+  private configTemplate : ConfigTemplate;
+  private configPath : string;
+  private port : number;
+
+  constructor(configTemplate: ConfigTemplate, port: number) {
+    this.configTemplate = configTemplate;
+    switch (configTemplate) {
+      case "standard": 
+        this.configPath = joinFilePath(__dirname, '../../standard_config.json');
+      default:
+        this.configPath = joinFilePath(__dirname, '../../config.json');
+    }
+    this.port = port;
+  }
+
+  async start() {
+    this.app = await new AppRunner().create(
       {
         // For testing we created a custom configuration that runs the server in memory so nothing gets written on disk.
-        config: joinFilePath(__dirname, '../../config.json'),
+        config: this.configPath,
         loaderProperties: {
           // Tell Components.js where to start looking for component configurations.
           // We need to make sure it finds the components we made in our project
@@ -22,7 +37,7 @@ describe('My Server', (): void => {
         // Should you have multiple test files, it is important they all host their test server
         // on a different port to prevent conflicts.
         shorthand: {
-          port: 3456,
+          port: this.port,
           loggingLevel: 'off',
         },
         // We do not use any custom Components.js variable bindings and set our values through the CLI options below.
@@ -30,20 +45,10 @@ describe('My Server', (): void => {
         variableBindings: {}
       } as any,
     );
-
+  
     // This starts with the settings provided above
-    await app.start();
-  });
-
-  afterAll(async(): Promise<void> => {
-    // Make sure to stop the server after all tests are finished so jest can finish.
-    await app.stop();
-  });
-
-  it('works.', async(): Promise<void> => {
-    // Verify that our server is running correctly.
-    // In practice, you would want to add tests here that test the specific behaviour added by your new components.
-    const response = await fetch('http://localhost:3456');
-    expect(response.status).toBe(200);
-  });
-});
+    await this.app.start();
+    console.log("Server started on port " + this.port);
+    return this.app;
+  }
+}
