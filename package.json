@@ -16,7 +16,8 @@
     "https://linkedsoftwaredependencies.org/bundles/npm/vsolid/^1.0.0/dist/": "dist/"
   },
   "scripts": {
-    "start": "npm run build && community-solid-server -c config.json -f .data -m .",
+    "start": "npm run build && community-solid-server -c config_file.json -f .data -m .",
+    "start:memory": "npm run build && community-solid-server -c config_memory.json -f .data -m .",
     "standard": "npm run build && community-solid-server -c standard_config.json -f .data -m .",
     "build": "npm run build:ts && npm run build:components",
     "build:components": "componentsjs-generator -s src -c dist/components -i .componentsignore -r vsolid",
@@ -34,7 +35,8 @@
     "benchmark": "^2.1.4",
     "g": "^2.0.1",
     "node": "^20.12.2",
-    "penny-pod-inspector": "^0.1024692321.5216227821"
+    "penny-pod-inspector": "^0.1024692321.5216227821",
+    "solidbench": "^1.7.1"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.2",

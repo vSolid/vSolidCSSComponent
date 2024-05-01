@@ -1,0 +1,10 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@solid/community-server/^7.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/vsolid/^1.0.0/components/context.jsonld"
+  ],
+  "import": [
+    "vsolid:config/default.json",
+    "vsolid:config/storage/backend/file.json"
+  ]
+}
