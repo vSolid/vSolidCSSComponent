@@ -1,11 +1,13 @@
+export const VS_PREFIX = "https://vsolid.org/properties#" as const;
+
 export const VS = {
-    operation: "https://vsolid.org/properties#operation",
-    delete: "https://vsolid.org/properties#delete",
-    insert: "https://vsolid.org/properties#insert",
-    delta_date: "https://vsolid.org/properties#delta_date",
-    delta_author: "https://vsolid.org/properties#delta_author",
-    next_delta: "https://vsolid.org/properties#next_delta",
-    contains_operation: "https://vsolid.org/properties#contains_operation",
+    operation: `${VS_PREFIX}operation`,
+    delete: `${VS_PREFIX}delete`,
+    insert: `${VS_PREFIX}insert`,
+    delta_date: `${VS_PREFIX}delta_date`,
+    delta_author: `${VS_PREFIX}delta_author`,
+    next_delta: `${VS_PREFIX}next_delta`,
+    contains_operation: `${VS_PREFIX}contains_operation`,
 } as const;
 
 export type VS = typeof VS;

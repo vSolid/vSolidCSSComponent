@@ -3,6 +3,7 @@ import { NotImplementedHttpError, OkResponseDescription, OperationHandler, Opera
 import { APPLICATION_SPARQL_VERSION_QUERY } from './utils/ContentTypes';
 import { getDeltaIdentifier } from './utils/DeltaUtil';
 import { readableToQuads } from './utils/QuadUtil';
+import { VS_PREFIX } from './utils/VS';
 
 /**
  * Handles Version Query for archiving.
@@ -34,7 +35,7 @@ export class VersionQueryHandler extends OperationHandler {
         const deltaRepresentation = await this.store.getRepresentation(deltaRepresentationIdentifier, operation.preferences, operation.conditions)
         const deltaStore = await readableToQuads(deltaRepresentation.data)
 
-        const sparql = "PREFIX vso: <https://vsolid.org/properties#> CONSTRUCT {?s vso:delta_date ?date .} WHERE {?s vso:delta_date ?date . ?s vso:next_delta ?next_deta . FILTER (!isBlank(?next_deta)) }"
+        const sparql = `PREFIX vso: <${VS_PREFIX}> CONSTRUCT {?s vso:delta_date ?date .} WHERE {?s vso:delta_date ?date . ?s vso:next_delta ?next_delta . FILTER (!isBlank(?next_delta)) }`
         const deltaQuadStream = await this.engine.queryQuads(sparql, { sources: [deltaStore], baseIRI: deltaRepresentationIdentifier.path })
 
         const deltaQuads = await deltaQuadStream.toArray()
