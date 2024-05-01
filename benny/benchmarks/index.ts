@@ -1,3 +1,4 @@
 export * from "./runner"
-export * from "./bench"
+export * from "./benchmark_functions"
 export * from "./server"
+export * from "./Benchmark"

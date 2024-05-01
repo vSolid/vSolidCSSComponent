@@ -33,6 +33,7 @@
     "@solid/community-server": "^7.0.5",
     "benchmark": "^2.1.4",
     "g": "^2.0.1",
+    "iso-bench": "^2.4.7",
     "node": "^20.12.2",
     "penny-pod-inspector": "^0.1024692321.5216227821"
   },
