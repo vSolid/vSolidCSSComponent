@@ -54,7 +54,7 @@ done
 
 PORT_NUMBER=3000
 if [ "$OS" = "Windows_NT" ]; then
-    Get-NetTCPConnection -LocalPort $PORT | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
+    netstat -ano | grep :3000 | awk '{print $5}' | xargs -I{} taskkill //F //PID {}
 else
     lsof -i tcp:${PORT_NUMBER} | awk 'NR!=1 {print $2}' | xargs kill 
 fi 
