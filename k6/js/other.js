@@ -15,7 +15,7 @@ export default function () {
     // })
 
     group("A A", () => {
-        http.get('http://localhost:3000/richardpod/mycontainer/', {
+        http.get(`http://localhost:3000/richardpod/mycontainer/mything`, {
           headers: {
               "Content-Type": "application/version-query"
           }

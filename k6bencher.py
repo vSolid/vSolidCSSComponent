@@ -28,18 +28,30 @@ def run_job(js_file, setup_file):
     server_process = subprocess.Popen(['npm', 'run', "start"], shell=True, stdout=subprocess.DEVNULL, cwd="./")
 
     #should be enough time for the server to start???
-    time.sleep(10)
+    wait_for_loaded_configs(server_process.stdout)
 
     try:
         print(f"Executing k6 for {js_file}")
         # Run k6 with the JavaScript file
-        subprocess.run(['k6', 'run', js_path, "--out", f"csv={js_file}_X"], check=True)
+        subprocess.run(['k6', 'run', js_path, "--out", f"csv=bencherResults/{js_file}.csv"], shell=True, check=True)
         
     finally:
         print("Shutting down any active Node server")
         # Ensure Node server is fully terminated before continuing
         server_process.terminate()
         server_process.wait()
+
+def wait_for_loaded_configs(server_output):
+    if server_output is None:
+        raise Exception("No output captured from the server process.")
+    
+    # Wait until "Loaded configs" is printed by the server
+    for line in iter(server_output.readline, b''):
+        line_str = line.decode('utf-8').strip()
+        print(line_str)
+        if "Loaded configs" in line_str:
+            print("Node server is ready.")
+            return
 
 
 for js_file, setup_file in jobs:

@@ -17,6 +17,7 @@
   },
   "scripts": {
     "start": "npm run build && community-solid-server -c config.json -f .data -m .",
+    "startNoBuild": "community-solid-server -c config.json -f .data -m .",
     "standard": "npm run build && community-solid-server -c standard_config.json -f .data -m .",
     "build": "npm run build:ts && npm run build:components",
     "build:components": "componentsjs-generator -s src -c dist/components -i .componentsignore -r vsolid",

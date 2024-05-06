@@ -6,3 +6,7 @@ benny/benchmark/results/
 .internal/
 
 bencherResults/
+
+*.log
+
+*.csv

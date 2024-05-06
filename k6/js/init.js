@@ -15,7 +15,7 @@ export default function () {
     // })
 
     group("Version materialization", () => {
-        http.get('http://localhost:3000/richardpod/mycontainer/mything', {
+        http.get(`http://localhost:3000/richardpod/mycontainer/mything`, {
           headers: {
               "Content-Type": "application/version-query"
           }
