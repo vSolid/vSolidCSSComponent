@@ -6,7 +6,6 @@ benchmarkRoot="./k6/"
 # Dictionary equivalent in Bash using associative array
 declare -A benchmarks
 benchmarks["js/init.js"]="DefaultSetup"
-benchmarks["js/other.js"]="DefaultSetup"
 
 # Function to run a benchmark
 run_benchmark() {
@@ -54,6 +53,11 @@ for bench in "${!benchmarks[@]}"; do
 done
 
 PORT_NUMBER=3000
-lsof -i tcp:${PORT_NUMBER} | awk 'NR!=1 {print $2}' | xargs kill 
+if [ "$OS" = "Windows_NT" ]; then
+    Get-NetTCPConnection -LocalPort $PORT | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
+else
+    lsof -i tcp:${PORT_NUMBER} | awk 'NR!=1 {print $2}' | xargs kill 
+fi 
+
 echo "Benchmark completed and node server stopped."
 
