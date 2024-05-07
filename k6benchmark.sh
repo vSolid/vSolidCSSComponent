@@ -1,11 +1,12 @@
 #!/bin/bash
 
 # Constants
-benchmarkRoot="./k6/"
+benchmarkRoot="./k6/js/"
+output="./benchmarkResults/"
 
 # Dictionary equivalent in Bash using associative array
 declare -A benchmarks
-benchmarks["js/init.js"]="DefaultSetup"
+benchmarks["init.js"]="DefaultSetup"
 
 # Function to run a benchmark
 run_benchmark() {
@@ -39,13 +40,13 @@ run_benchmark() {
 
     # Construct the command for running the benchmark
     fullPath=$(realpath "$benchmarkRoot/$benchmarkName")
-    command="k6 run $fullPath --out csv=bencherResults.csv"
+    savepath=
+    command="k6 run $fullPath --out csv=$(realpath $output/$benchmarkName-Results.csv)"
     echo "Running command: $command"
 
     # Execute the benchmark
     $command
     echo "Benchmark completed."
-
 
     PORT_NUMBER=3000
     if [ "$OS" = "Windows_NT" ]; then
@@ -56,6 +57,8 @@ run_benchmark() {
 
     echo "Benchmark completed and node server stopped."
 }
+
+mkdir -p $output
 
 # Loop over benchmarks and run them
 for bench in "${!benchmarks[@]}"; do
