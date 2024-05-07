@@ -16,8 +16,8 @@
     "https://linkedsoftwaredependencies.org/bundles/npm/vsolid/^1.0.0/dist/": "dist/"
   },
   "scripts": {
-    "start": "npm run build && community-solid-server -c config.json -f .data -m .",
-    "startNoBuild": "community-solid-server -c config.json -f .data -m .",
+    "start": "npm run build && community-solid-server -c config_file.json -f .data -m .",
+    "startNoBuild": "community-solid-server -c config_file.json -f .data -m .",
     "startNoBuildStandard": "community-solid-server -c standard_config.json -f .data -m . --port 4000",
     "standard": "npm run build && community-solid-server -c standard_config.json -f .data -m . --port 4000",
     "build": "npm run build:ts && npm run build:components",
@@ -25,7 +25,8 @@
     "build:ts": "tsc",
     "prepare": "npm run build",
     "test": "jest",
-    "bench": "cd ./benny && tsc && node ./dist/runner.js"
+    "bench": "cd ./benny && tsc && node ./dist/runner.js",
+    "solidbench": "solidbench generate"
   },
   "files": [
     "dist",
