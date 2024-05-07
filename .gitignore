@@ -4,3 +4,9 @@ dist
 node_modules
 benny/benchmark/results/
 .internal/
+
+bencherResults/
+
+*.log
+
+*.csv
