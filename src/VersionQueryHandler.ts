@@ -1,8 +1,11 @@
 import { QueryEngine } from '@comunica/query-sparql';
+import type { Quad } from '@rdfjs/types';
 import { NotImplementedHttpError, OkResponseDescription, OperationHandler, OperationHandlerInput, OperationHttpHandlerInput, RepresentationMetadata, ResourceStore, ResponseDescription, TEXT_TURTLE, serializeQuads } from "@solid/community-server";
+import { DataFactory } from "n3";
 import { APPLICATION_SPARQL_VERSION_QUERY } from './utils/ContentTypes';
 import { getDeltaIdentifier } from './utils/DeltaUtil';
 import { readableToQuads } from './utils/QuadUtil';
+import { VS } from './utils/VS';
 
 /**
  * Handles Version Query for archiving.
@@ -19,7 +22,7 @@ export class VersionQueryHandler extends OperationHandler {
 
     public async canHandle({ request, operation }: OperationHttpHandlerInput): Promise<void> {
         if (operation.method !== 'GET') {
-            throw new NotImplementedHttpError('This handler only supports POST operations');
+            throw new NotImplementedHttpError('This handler only supports GET operations');
         }
 
         if (request.headers['content-type'] != APPLICATION_SPARQL_VERSION_QUERY) {
@@ -34,11 +37,12 @@ export class VersionQueryHandler extends OperationHandler {
         const deltaRepresentation = await this.store.getRepresentation(deltaRepresentationIdentifier, operation.preferences, operation.conditions)
         const deltaStore = await readableToQuads(deltaRepresentation.data)
 
-        const sparql = "PREFIX vso: <https://vsolid.org/properties#> CONSTRUCT {?s vso:delta_date ?date .} WHERE {?s vso:delta_date ?date . ?s vso:next_delta ?next_deta . FILTER (!isBlank(?next_deta)) }"
-        const deltaQuadStream = await this.engine.queryQuads(sparql, { sources: [deltaStore], baseIRI: deltaRepresentationIdentifier.path })
+        let quads: Quad[] = []
+        const raw = deltaStore.match(null, DataFactory.namedNode(VS.delta_date), null)
+        for (const quad of raw) {
+            quads.push(quad)
+        }
 
-        const deltaQuads = await deltaQuadStream.toArray()
-
-        return new OkResponseDescription(new RepresentationMetadata(TEXT_TURTLE), serializeQuads(deltaQuads))
+        return new OkResponseDescription(new RepresentationMetadata(TEXT_TURTLE), serializeQuads(quads))
     }
 }

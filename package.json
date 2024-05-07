@@ -18,7 +18,8 @@
   "scripts": {
     "start": "npm run build && community-solid-server -c config.json -f .data -m .",
     "startNoBuild": "community-solid-server -c config.json -f .data -m .",
-    "standard": "npm run build && community-solid-server -c standard_config.json -f .data -m .",
+    "startNoBuildStandard": "community-solid-server -c standard_config.json -f .data -m . --port 4000",
+    "standard": "npm run build && community-solid-server -c standard_config.json -f .data -m . --port 4000",
     "build": "npm run build:ts && npm run build:components",
     "build:components": "componentsjs-generator -s src -c dist/components -i .componentsignore -r vsolid",
     "build:ts": "tsc",
@@ -36,7 +37,8 @@
     "g": "^2.0.1",
     "iso-bench": "^2.4.7",
     "node": "^20.12.2",
-    "penny-pod-inspector": "^0.1024692321.5216227821"
+    "penny-pod-inspector": "^0.1024692321.5216227821",
+    "solidbench": "^1.7.1"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.2",
