@@ -20,7 +20,7 @@ export class VersionMaterializationHandler extends OperationHandler {
 
     public async canHandle({ request, operation }: OperationHttpHandlerInput): Promise<void> {
         if (operation.method !== 'GET') {
-            throw new NotImplementedHttpError('This handler only supports POST operations');
+            throw new NotImplementedHttpError('This handler only supports GET operations');
         }
 
         if (request.headers['content-type'] != APPLICATION_SPARQL_VERSION_MATERIALIZATION) {

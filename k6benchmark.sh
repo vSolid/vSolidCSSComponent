@@ -62,3 +62,9 @@ for bench in "${!benchmarks[@]}"; do
     run_benchmark "$bench"
 done
 
+PORT_NUMBER=3000
+if [ "$OS" = "Windows_NT" ]; then
+    netstat -ano | grep :${PORT_NUMBER} | awk '{print $5}' | xargs -I{} taskkill //F //PID {}
+else
+    lsof -i tcp:${PORT_NUMBER} | awk 'NR!=1 {print $2}' | xargs kill 
+fi 
