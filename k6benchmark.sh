@@ -7,6 +7,7 @@ output="./benchmarkResults/"
 # Dictionary equivalent in Bash using associative array
 declare -A benchmarks
 benchmarks["init.js"]="DefaultSetup"
+benchmarks["other.js"]="DefaultSetup"
 
 # Function to run a benchmark
 run_benchmark() {
@@ -40,7 +41,6 @@ run_benchmark() {
 
     # Construct the command for running the benchmark
     fullPath=$(realpath "$benchmarkRoot/$benchmarkName")
-    savepath=
     command="k6 run $fullPath --out csv=$(realpath $output/$benchmarkName-Results.csv)"
     echo "Running command: $command"
 
