@@ -1,9 +1,10 @@
 import http from 'k6/http';
-import { group } from 'k6';
+import { group, check} from 'k6';
 export const options = {
   vus: 10,
   duration: '30s',
 };
+
 
 export default function () {
     // group("Version query", () => {
@@ -15,10 +16,11 @@ export default function () {
     // })
 
     group("Version materialization", () => {
-        http.get(`http://localhost:3000/richardpod/mycontainer/mything`, {
-          headers: {
-              "Content-Type": "application/version-query"
-          }
-        });
-    })
+        const res = http.get(`http://localhost:3000/testpod/bingbong`);
+
+        
+        if (res.status !== 200) {
+            console.log(`Request failed. Status: ${res.status}, Body: ${res.body}`);
+        }
+    });
 }
