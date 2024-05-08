@@ -38,7 +38,8 @@
     "g": "^2.0.1",
     "node": "^20.12.2",
     "penny-pod-inspector": "^0.1024692321.5216227821",
-    "solidbench": "^1.7.1"
+    "solidbench": "^1.7.1",
+    "got": "12.3.0"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.2",
