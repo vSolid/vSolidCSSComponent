@@ -34,6 +34,6 @@
         "css:config/util/resource-locker/file.json",
         "css:config/util/variables/default.json",
         "vsolid:config/ldp/handler/components/operation-handler.json",
-        "vsolid:config/penny.json"
+        "vsolid:config/inspector.json"
     ]
 }

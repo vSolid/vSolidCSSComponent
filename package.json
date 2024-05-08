@@ -16,7 +16,7 @@
     "https://linkedsoftwaredependencies.org/bundles/npm/vsolid/^1.0.0/dist/": "dist/"
   },
   "scripts": {
-    "start": "npm run build && community-solid-server -c config_file.json -f .data -m .",
+    "start": "community-solid-server -c config_file.json -f .data -m .",
     "startNoBuild": "community-solid-server -c config_file.json -f .data -m .",
     "startNoBuildStandard": "community-solid-server -c standard_config.json -f .data -m . --port 4000",
     "standard": "npm run build && community-solid-server -c standard_config.json -f .data -m . --port 4000",
@@ -36,10 +36,11 @@
     "@solid/community-server": "^7.0.5",
     "benchmark": "^2.1.4",
     "g": "^2.0.1",
+    "got": "12.3.0",
     "node": "^20.12.2",
     "penny-pod-inspector": "^0.1024692321.5216227821",
     "solidbench": "^1.7.1",
-    "got": "12.3.0"
+    "vsolid-pod-inspector": "github:vSolid/vSolidPodInspector"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.2",
