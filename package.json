@@ -16,6 +16,7 @@
     "https://linkedsoftwaredependencies.org/bundles/npm/vsolid/^1.0.0/dist/": "dist/"
   },
   "scripts": {
+
     "start": "community-solid-server -c config_file.json -f .data -m .",
     "startNoBuild": "community-solid-server -c config_file.json -f .data -m .",
     "startNoBuildStandard": "community-solid-server -c standard_config.json -f .data -m . --port 4000",
