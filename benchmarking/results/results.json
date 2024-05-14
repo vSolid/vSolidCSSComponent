@@ -1,0 +1,130 @@
+[
+    {
+        "tag": "Q_10",
+        "url": "http://localhost:3000/test/scale10",
+        "average_response_time": 15.44032096862793,
+        "minimum_response_time": 12.025833129882812,
+        "maximum_response_time": 38.2382869720459,
+        "num_requests": 10
+    },
+    {
+        "tag": "VQ_10",
+        "url": "http://localhost:3000/test/scale10",
+        "average_response_time": 11.3616943359375,
+        "minimum_response_time": 9.512901306152344,
+        "maximum_response_time": 14.621973037719727,
+        "num_requests": 10
+    },
+    {
+        "tag": "VMF_10",
+        "url": "http://localhost:3000/test/scale10?delta_id=793ecd48-07a1-4d2e-87d8-bd8e0c539030",
+        "average_response_time": 17.699766159057617,
+        "minimum_response_time": 15.461206436157227,
+        "maximum_response_time": 20.09415626525879,
+        "num_requests": 10
+    },
+    {
+        "tag": "VML_10",
+        "url": "http://localhost:3000/test/scale10?delta_id=8d753ef7-646e-4d81-b6ae-bd139950d815",
+        "average_response_time": 15.386176109313965,
+        "minimum_response_time": 13.055801391601562,
+        "maximum_response_time": 18.700122833251953,
+        "num_requests": 10
+    },
+    {
+        "tag": "Q_100",
+        "url": "http://localhost:3000/test/scale100",
+        "average_response_time": 11.277174949645996,
+        "minimum_response_time": 8.004188537597656,
+        "maximum_response_time": 22.15099334716797,
+        "num_requests": 10
+    },
+    {
+        "tag": "VQ_100",
+        "url": "http://localhost:3000/test/scale100",
+        "average_response_time": 15.326499938964844,
+        "minimum_response_time": 10.580062866210938,
+        "maximum_response_time": 18.014192581176758,
+        "num_requests": 10
+    },
+    {
+        "tag": "VMF_100",
+        "url": "http://localhost:3000/test/scale100?delta_id=7582b605-37e4-479a-89a1-1b245e9b88ab",
+        "average_response_time": 21.395158767700195,
+        "minimum_response_time": 18.4476375579834,
+        "maximum_response_time": 32.48476982116699,
+        "num_requests": 10
+    },
+    {
+        "tag": "VML_100",
+        "url": "http://localhost:3000/test/scale100?delta_id=fce36cca-df70-4140-876e-4499867e01f5",
+        "average_response_time": 18.9237117767334,
+        "minimum_response_time": 15.55013656616211,
+        "maximum_response_time": 28.26404571533203,
+        "num_requests": 10
+    },
+    {
+        "tag": "Q_1000",
+        "url": "http://localhost:3000/test/scale1_000",
+        "average_response_time": 9.579658508300781,
+        "minimum_response_time": 8.508682250976562,
+        "maximum_response_time": 10.506629943847656,
+        "num_requests": 10
+    },
+    {
+        "tag": "VQ_1000",
+        "url": "http://localhost:3000/test/scale1_000",
+        "average_response_time": 47.406864166259766,
+        "minimum_response_time": 35.900115966796875,
+        "maximum_response_time": 65.92774391174316,
+        "num_requests": 10
+    },
+    {
+        "tag": "VMF_1000",
+        "url": "http://localhost:3000/test/scale1_000?delta_id=b73af2c6-a361-4a20-a10c-73a72ca5462e",
+        "average_response_time": 76.95784568786621,
+        "minimum_response_time": 69.73385810852051,
+        "maximum_response_time": 84.9771499633789,
+        "num_requests": 10
+    },
+    {
+        "tag": "VML_1000",
+        "url": "http://localhost:3000/test/scale1_000?delta_id=2ad8aff4-cce7-4ca2-8e0e-2760c77e2301",
+        "average_response_time": 50.8744478225708,
+        "minimum_response_time": 41.588783264160156,
+        "maximum_response_time": 85.91794967651367,
+        "num_requests": 10
+    },
+    {
+        "tag": "Q_10000",
+        "url": "http://localhost:3000/test/scale10_000",
+        "average_response_time": 10.17599105834961,
+        "minimum_response_time": 8.448123931884766,
+        "maximum_response_time": 13.933181762695312,
+        "num_requests": 10
+    },
+    {
+        "tag": "VQ_10000",
+        "url": "http://localhost:3000/test/scale10_000",
+        "average_response_time": 298.905873298645,
+        "minimum_response_time": 265.4833793640137,
+        "maximum_response_time": 339.04004096984863,
+        "num_requests": 10
+    },
+    {
+        "tag": "VMF_10000",
+        "url": "http://localhost:3000/test/scale10_000?delta_id=e1ce3834-69f3-4696-a6dc-7e7ff15be122",
+        "average_response_time": 1111.931848526001,
+        "minimum_response_time": 1009.0224742889404,
+        "maximum_response_time": 1782.158374786377,
+        "num_requests": 10
+    },
+    {
+        "tag": "VML_10000",
+        "url": "http://localhost:3000/test/scale10_000?delta_id=6759ca42-925e-4f98-a00d-14b28f65d8ec",
+        "average_response_time": 189.68713283538818,
+        "minimum_response_time": 170.274019241333,
+        "maximum_response_time": 240.03171920776367,
+        "num_requests": 10
+    }
+]

@@ -16,11 +16,10 @@
     "https://linkedsoftwaredependencies.org/bundles/npm/vsolid/^1.0.0/dist/": "dist/"
   },
   "scripts": {
-
     "start": "community-solid-server -c config_file.json -f .data -m .",
     "startNoBuild": "community-solid-server -c config_file.json -f .data -m .",
-    "startNoBuildStandard": "community-solid-server -c standard_config.json -f .data -m . --port 4000",
-    "standard": "npm run build && community-solid-server -c standard_config.json -f .data -m . --port 4000",
+    "startNoBuildStandard": "community-solid-server -c standard_config.json -f .data -m . --port 3000",
+    "standard": "npm run build && community-solid-server -c standard_config.json -f .data -m . --port 3000",
     "build": "npm run build:ts && npm run build:components",
     "build:components": "componentsjs-generator -s src -c dist/components -i .componentsignore -r vsolid",
     "build:ts": "tsc",
@@ -48,6 +47,7 @@
     "@tsconfig/node18": "^18.2.2",
     "@types/benchmark": "^2.1.5",
     "@types/jest": "^29.5.12",
+    "@types/streamify-array": "^1.0.3",
     "@types/uuid": "^9.0.8",
     "componentsjs-generator": "^3.1.2",
     "jest": "^29.7.0",

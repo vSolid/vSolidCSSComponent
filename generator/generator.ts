@@ -30,6 +30,7 @@ const historyLengths = {
     "scale100": 100,
     "scale1_000": 1_000,
     "scale10_000": 10_000,
+    "scale100_000": 100_000,
 } as const;
 
 const iriToPath = {
@@ -42,7 +43,7 @@ async function generateTestData() {
         const baseFilePath = getFilePath(iri);
         const documentFilePath = baseFilePath + "$.ttl";
         const documentWriteStream = await getWriteStream(documentFilePath);
-        
+
         const deltaFilePath = baseFilePath + ".vSolid";
         const metaFilePath = baseFilePath + ".meta";
 
@@ -50,7 +51,7 @@ async function generateTestData() {
 
         const quads : RDF.Quad[] = [];
         const deltas : RDF.Quad[] = [];
-        
+
         for (let i = 0; i < value; i++) {
             const thing = quad(
                 namedNode(iri),

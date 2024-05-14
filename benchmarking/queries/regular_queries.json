@@ -1,0 +1,37 @@
+{
+    "urls": [
+        {
+            "url": "http://localhost:3000/test/scale1",
+            "tag": "Q_1"
+        },
+        {
+            "url": "http://localhost:3000/test/scale10",
+            "tag": "Q_10"
+        },
+        {
+            "url": "http://localhost:3000/test/scale100",
+            "tag": "Q_100"
+        }
+        ,
+        {
+            "url": "http://localhost:3000/test/scale1_000",
+            "tag": "Q_1000"
+        },
+        {
+            "url": "http://localhost:3000/test/scale10_000",
+            "tag": "Q_10000"
+        },
+        {
+            "url": "http://localhost:3000/test/scale100_000",
+            "tag": "Q_100000"
+        },
+        {
+            "url": "http://localhost:3000/test/scale1_000_000",
+            "tag": "Q_1000000"
+        },
+        {
+            "url": "http://localhost:3000/test/scale10_000_000",
+            "tag": "Q_10000000"
+        }
+    ]
+}

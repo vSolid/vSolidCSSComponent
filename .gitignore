@@ -10,3 +10,5 @@ bencherResults/
 *.log
 
 *.csv
+
+rdf_generator.exe

@@ -1,0 +1,66 @@
+[
+    {
+        "tag": "Q_1",
+        "url": "http://localhost:3000/test/scale1",
+        "average_response_time": 6.394004821777344,
+        "minimum_response_time": 4.553794860839844,
+        "maximum_response_time": 12.59469985961914,
+        "num_requests": 10
+    },
+    {
+        "tag": "Q_10",
+        "url": "http://localhost:3000/test/scale10",
+        "average_response_time": 6.474041938781738,
+        "minimum_response_time": 5.555868148803711,
+        "maximum_response_time": 7.572650909423828,
+        "num_requests": 10
+    },
+    {
+        "tag": "Q_100",
+        "url": "http://localhost:3000/test/scale100",
+        "average_response_time": 6.600069999694824,
+        "minimum_response_time": 5.000114440917969,
+        "maximum_response_time": 9.011268615722656,
+        "num_requests": 10
+    },
+    {
+        "tag": "Q_1000",
+        "url": "http://localhost:3000/test/scale1_000",
+        "average_response_time": 7.004499435424805,
+        "minimum_response_time": 4.998683929443359,
+        "maximum_response_time": 8.620738983154297,
+        "num_requests": 10
+    },
+    {
+        "tag": "Q_10000",
+        "url": "http://localhost:3000/test/scale10_000",
+        "average_response_time": 6.520438194274902,
+        "minimum_response_time": 5.000591278076172,
+        "maximum_response_time": 8.511781692504883,
+        "num_requests": 10
+    },
+    {
+        "tag": "Q_100000",
+        "url": "http://localhost:3000/test/scale100_000",
+        "average_response_time": 8.634376525878906,
+        "minimum_response_time": 6.592273712158203,
+        "maximum_response_time": 14.238595962524414,
+        "num_requests": 10
+    },
+    {
+        "tag": "Q_1000000",
+        "url": "http://localhost:3000/test/scale1_000_000",
+        "average_response_time": 213.80043029785156,
+        "minimum_response_time": 183.60209465026855,
+        "maximum_response_time": 242.06089973449707,
+        "num_requests": 10
+    },
+    {
+        "tag": "Q_10000000",
+        "url": "http://localhost:3000/test/scale10_000_000",
+        "average_response_time": 2280.098533630371,
+        "minimum_response_time": 2065.4678344726562,
+        "maximum_response_time": 2563.8773441314697,
+        "num_requests": 10
+    }
+]
