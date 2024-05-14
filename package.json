@@ -27,7 +27,8 @@
     "prepare": "npm run build",
     "test": "jest",
     "bench": "cd ./benny && tsc && node ./dist/runner.js",
-    "solidbench": "solidbench generate"
+    "solidbench": "solidbench generate",
+    "generate": "node ./dist/generator/generator.js"
   },
   "files": [
     "dist",
