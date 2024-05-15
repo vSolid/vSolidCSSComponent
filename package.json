@@ -2,7 +2,7 @@
   "name": "vsolid",
   "version": "1.0.0",
   "description": "A Version Control Component for Community Solid Server",
-  "repository": "git@github.com:rilarchsen/vSolid.git",
+  "repository": "git@github.com:vSolid/vSolidCSSComponent.git",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/vsolid",
