@@ -58,9 +58,10 @@ export class ArchivingDataAccessorBasedStore extends DataAccessorBasedStore {
       const sparqlPatch = (patch as SparqlUpdatePatch)
       const deltaID = await this.generateDelta(identifier, sparqlPatch);
 
-      patch.metadata.set(DataFactory.namedNode(VS.next_delta), deltaID);
+      let metadata = new RepresentationMetadata()
+      metadata.set(DataFactory.namedNode(VS.next_delta), deltaID)
 
-      this.dataaccessor.writeMetadata(identifier, patch.metadata);
+      await this.dataaccessor.writeMetadata(identifier, metadata);
     }
 
     return await super.modifyResource(identifier, patch, conditions);
