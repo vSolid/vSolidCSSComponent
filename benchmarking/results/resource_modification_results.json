@@ -1,0 +1,42 @@
+[
+    {
+        "tag": "DG_1",
+        "url": "http://localhost:3000/test/scale1",
+        "average_response_time": 22.53870964050293,
+        "minimum_response_time": 17.131567001342773,
+        "maximum_response_time": 45.53699493408203,
+        "num_requests": 10
+    },
+    {
+        "tag": "DG_10",
+        "url": "http://localhost:3000/test/scale10",
+        "average_response_time": 18.964529037475586,
+        "minimum_response_time": 17.570972442626953,
+        "maximum_response_time": 20.017147064208984,
+        "num_requests": 10
+    },
+    {
+        "tag": "DG_100",
+        "url": "http://localhost:3000/test/scale100",
+        "average_response_time": 20.74263095855713,
+        "minimum_response_time": 19.24610137939453,
+        "maximum_response_time": 24.318218231201172,
+        "num_requests": 10
+    },
+    {
+        "tag": "DG_1000",
+        "url": "http://localhost:3000/test/scale1_000",
+        "average_response_time": 39.35565948486328,
+        "minimum_response_time": 37.51802444458008,
+        "maximum_response_time": 43.89357566833496,
+        "num_requests": 10
+    },
+    {
+        "tag": "DG_10000",
+        "url": "http://localhost:3000/test/scale10_000",
+        "average_response_time": 221.93546295166016,
+        "minimum_response_time": 204.82516288757324,
+        "maximum_response_time": 251.34539604187012,
+        "num_requests": 10
+    }
+]

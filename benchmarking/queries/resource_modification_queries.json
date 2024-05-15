@@ -1,0 +1,49 @@
+{
+  "urls":[
+    {
+      "tag": "DG_1",
+      "url": "http://localhost:3000/test/scale1",
+      "method": "PATCH",
+      "headers": {
+          "Content-Type": "application/sparql-update"
+      },
+      "body": "DELETE DATA {<http://localhost:3000/test/scale1#data> <http://example.org/property> \"test 0\".}; INSERT DATA {<http://localhost:3000/test/scale1#resource> <https://vsolid.org/properties#delta_generation_test> \"modified value\". <http://localhost:3000/test/scale1#resource> <https://vsolid.org/properties#delta_generation_test> \"modified value 2\".};"
+    },
+    {
+      "tag": "DG_10",
+      "url": "http://localhost:3000/test/scale10",
+      "method": "PATCH",
+      "headers": {
+        "Content-Type": "application/sparql-update"
+      },
+      "body": "DELETE DATA {<http://localhost:3000/test/scale10#data> <http://example.org/property> \"test 0\". <http://localhost:3000/test/scale10#data> <http://example.org/property> \"test 1\".}; INSERT DATA {<http://localhost:3000/test/scale10#resource> <https://vsolid.org/properties#delta_generation_test> \"modified value 1\". <http://localhost:3000/test/scale10#resource> <https://vsolid.org/properties#delta_generation_test> \"modified value 2\".};"
+    },
+    {
+      "tag": "DG_100",
+      "url": "http://localhost:3000/test/scale100",
+      "method": "PATCH",
+      "headers": {
+        "Content-Type": "application/sparql-update"
+      },
+      "body": "DELETE DATA {<http://localhost:3000/test/scale100#data> <http://example.org/property> \"test 0\". <http://localhost:3000/test/scale100#data> <http://example.org/property> \"test 1\".}; INSERT DATA {<http://localhost:3000/test/scale100#resource> <https://vsolid.org/properties#delta_generation_test> \"modified value\". <http://localhost:3000/test/scale100#resource> <https://vsolid.org/properties#delta_generation_test> \"modified value 2\".};"
+    },
+    {
+      "tag": "DG_1000",
+      "url": "http://localhost:3000/test/scale1_000",
+      "method": "PATCH",
+      "headers": {
+        "Content-Type": "application/sparql-update"
+      },
+      "body": "DELETE DATA {<http://localhost:3000/test/scale1_000#data> <http://example.org/property> \"test 0\". <http://localhost:3000/test/scale1_000#data> <http://example.org/property> \"test 1\".}; INSERT DATA {<http://localhost:3000/test/scale1_000#resource> <https://vsolid.org/properties#delta_generation_test> \"modified value\". <http://localhost:3000/test/scale1_000#resource> <https://vsolid.org/properties#delta_generation_test> \"modified value 2\".};"
+    },
+    {
+      "tag": "DG_10000",
+      "url": "http://localhost:3000/test/scale10_000",
+      "method": "PATCH",
+      "headers": {
+        "Content-Type": "application/sparql-update"
+      },
+      "body": "DELETE DATA {<http://localhost:3000/test/scale10_000#data> <http://example.org/property> \"test 0\". <http://localhost:3000/test/scale10_000#data> <http://example.org/property> \"test 1\".}; INSERT DATA {<http://localhost:3000/test/scale10_000#resource> <https://vsolid.org/properties#delta_generation_test> \"modified value\". <http://localhost:3000/test/scale10_000#resource> <https://vsolid.org/properties#delta_generation_test> \"modified value 2\".};"
+    }
+  ]
+}
